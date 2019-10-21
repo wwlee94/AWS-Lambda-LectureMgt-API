@@ -7,13 +7,13 @@ const dynamo = new AWS.DynamoDB.DocumentClient();
 function lectureController(dynamo, operation, queryparam, callback){
     if(operation == 'GET'){
         if(queryparam != null){
-            // code, lecture key는 있지만 값은 비어있으면
+            // code, lecture key는 있지만 값은 비어있으면 예외처리
             if("code" in queryparam && "lecture" in queryparam){
                 if(queryparam["code"] == "" && queryparam["lecture"] == "") {
                     callback(null,{'body': JSON.stringify("code, lecture 요청변수가 비어있습니다.")});
                 }
             }
-            // code 값이 있으면
+            // code 값이 있으면 code로 검색 (lecture 값 있어도)
             if("code" in queryparam){
                 if(queryparam["code"] != ""){   // 빈값이 아닐때
                     console.log("search code by "+queryparam["code"]);
@@ -77,6 +77,27 @@ function lectureController(dynamo, operation, queryparam, callback){
 //시간표 컨트롤러
 function timetableController(dynamo, operation, queryparam, postbody, callback){
     switch (operation) {
+        case 'GET':
+            if(queryparam != null){
+                if("user_key" in queryparam){
+                    var params = {
+                        TableName: 'programmers_timetable',
+                        ProjectionExpression : "lecture_code",  //보여줄 column
+                        KeyConditionExpression : "user_key = :key",
+                        ExpressionAttributeValues: {
+                            ":key" : queryparam["user_key"]
+                        }
+                    }
+                    dynamo.query(params, (err, data) => {
+                        callback(null, {
+                            'statusCode': 200,
+                            'headers': {},
+                            'body': JSON.stringify(data)
+                        });
+                    });
+                }
+            }
+            break;
         case 'POST':
             //validation
             if(postbody != null){
@@ -129,27 +150,6 @@ function timetableController(dynamo, operation, queryparam, postbody, callback){
                             'statusCode': 200,
                             'headers': {},
                             'body': text
-                        });
-                    });
-                }
-            }
-            break;
-        case 'GET':
-            if(queryparam != null){
-                if("user_key" in queryparam){
-                    var params = {
-                        TableName: 'programmers_timetable',
-                        ProjectionExpression : "lecture_code",  //보여줄 column
-                        KeyConditionExpression : "user_key = :key",
-                        ExpressionAttributeValues: {
-                            ":key" : queryparam["user_key"]
-                        }
-                    }
-                    dynamo.query(params, (err, data) => {
-                        callback(null, {
-                            'statusCode': 200,
-                            'headers': {},
-                            'body': JSON.stringify(data)
                         });
                     });
                 }
