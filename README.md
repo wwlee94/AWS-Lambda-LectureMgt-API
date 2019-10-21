@@ -29,8 +29,8 @@ AWS Lambda를 사용한 강좌관리 serverless API
 - 사용자가 원하는 강좌를 추가하거나 삭제 할 수 있는 API
 - JSON 으로 RequestBody 요청<br>
   {<br>
-    "user_key" : "{사용자 ID 토큰}",<br>
-    "code" : "{강좌 코드}"<br>
+   &nbsp;&nbsp;&nbsp;&nbsp;"user_key" : "{사용자 ID 토큰}",<br>
+   &nbsp;&nbsp;&nbsp;&nbsp;"code" : "{강좌 코드}"<br>
   }
   
 ### 2-1. 시간표 POST, DELETE API - 요청 별 ResponseBody 정보
