@@ -7,13 +7,13 @@ const dynamo = new AWS.DynamoDB.DocumentClient();
 function lectureController(dynamo, operation, queryparam, callback){
     if(operation == 'GET'){
         if(queryparam != null){
-            // code, lecture key는 있지만 값은 비어있으면 예외처리
+            // code, lecture key는 있지만 값은 비어있으면
             if("code" in queryparam && "lecture" in queryparam){
                 if(queryparam["code"] == "" && queryparam["lecture"] == "") {
-                    callback(null,{'body': JSON.stringify("code, lecture 요청변수가 비어있습니다.")});
+                    callback(null,{'body': errorMessage("/programmers/lecture", "GET", "code, lecture 요청 변수가 비어 있어 조회 할 수 없습니다.")});
                 }
             }
-            // code 값이 있으면 code로 검색 (lecture 값 있어도)
+            // code 값이 있으면
             if("code" in queryparam){
                 if(queryparam["code"] != ""){   // 빈값이 아닐때
                     console.log("search code by "+queryparam["code"]);
@@ -32,7 +32,7 @@ function lectureController(dynamo, operation, queryparam, callback){
                         });
                     });
                 }
-                else callback(null,{'body': JSON.stringify("code 요청변수가 비어있습니다.")});
+                else callback(null,{'body': errorMessage("/programmers/lecture", "GET", "code 요청 변수가 비어 있어 조회 할 수 없습니다.")});
             }
             // lecture 값이 있으면
             else if("lecture" in queryparam){
@@ -53,7 +53,7 @@ function lectureController(dynamo, operation, queryparam, callback){
                         });
                     });
                 }
-                else callback(null,{'body': JSON.stringify("lecture 요청변수가 비어있습니다.")});
+                else callback(null,{'body': errorMessage("/programmers/lecture", "GET", "lecture 요청 변수가 비어 있어 조회 할 수 없습니다.")});
             }
         }
         else{
@@ -96,7 +96,9 @@ function timetableController(dynamo, operation, queryparam, postbody, callback){
                         });
                     });
                 }
+                else callback(null,{'body': errorMessage("/programmers/timetable","httpMethod", "GET", "user_key 요청 변수가 비어 있어 시간표를 조회 할 수 없습니다.")});
             }
+            else callback(null,{'body': errorMessage("/programmers/timetable","httpMethod", "GET", "user_key 요청 변수가 없어 시간표를 조회 할 수 없습니다.")});
             break;
         case 'POST':
             //validation
@@ -113,8 +115,8 @@ function timetableController(dynamo, operation, queryparam, postbody, callback){
                     }
                     var text = "";
                     dynamo.put(params, (err,data) => {
-                        if(err)  text = JSON.stringify("데이터 삽입 에러 : "+err);
-                        else text = JSON.stringify("데이터 삽입 성공 !");
+                        if(err)  text = JSON.stringify({"message":"데이터 삽입 에러 - "+err});
+                        else text = JSON.stringify({"message":"데이터 삽입 성공 !"});
                         callback(null, {
                             'statusCode': 200,
                             'headers': {},
@@ -122,7 +124,10 @@ function timetableController(dynamo, operation, queryparam, postbody, callback){
                         });
                     });
                 }
+                else if("user_key" in postbody && !("code" in postbody)) callback(null,{'body': errorMessage("/programmers/timetable","httpMethod", "POST", "code 요청 변수가 없어 데이터를 삽입 할 수 없습니다.")});
+                else if(!("user_key" in postbody) && "code" in postbody) callback(null,{'body': errorMessage("/programmers/timetable","httpMethod", "POST", "lecture 요청 변수가 없어 데이터를 삽입 할 수 없습니다.")});
             }
+            else callback(null,{'body': errorMessage("/programmers/timetable","httpMethod", "POST", "code, lecture 요청 변수가 없어 데이터를 삽입 할 수 없습니다.")});
             break;
         case 'DELETE':
             //validation
@@ -144,8 +149,8 @@ function timetableController(dynamo, operation, queryparam, postbody, callback){
                     }
                     var text = "";
                     dynamo.delete(params, (err,data) => {
-                        if(err)  text = JSON.stringify("데이터 삭제 에러 : "+err);
-                        else text = JSON.stringify("데이터 삭제 성공 !");
+                        if(err)  text = JSON.stringify({"message":"데이터 삭제 에러 - "+err});
+                        else text = JSON.stringify({"message":"데이터 삭제 성공 !"});
                         callback(null, {
                             'statusCode': 200,
                             'headers': {},
@@ -153,14 +158,24 @@ function timetableController(dynamo, operation, queryparam, postbody, callback){
                         });
                     });
                 }
+                else if("user_key" in postbody && !("code" in postbody)) callback(null,{'body': errorMessage("/programmers/timetable","httpMethod", "DELETE", "code 요청 변수가 없어 데이터를 삽입 할 수 없습니다.")});
+                else if(!("user_key" in postbody) && "code" in postbody) callback(null,{'body': errorMessage("/programmers/timetable","httpMethod", "DELETE", "user_key 요청 변수가 없어 데이터를 삽입 할 수 없습니다.")});
             }
+            else callback(null,{'body': errorMessage("/programmers/timetable","httpMethod", "DELETE", "user_key, code 요청 변수가 없어 데이터를 삽입 할 수 없습니다.")});
             break;
         default:
             callback(new Error('Unrecognized operation'));
             break;
     }
 }
-
+// 에러 메시지
+function errorMessage(resource, httpMethod, message){
+    const msg = {};
+    msg["resource"] = resource;
+    msg["httpMethod"] = httpMethod;
+    msg["message"] = message;
+    return JSON.stringify(msg)
+}
 module.exports.handler = (event, context, callback) => {
     // HTTP method
     const operation = event.httpMethod;
