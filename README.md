@@ -19,6 +19,7 @@ AWS Lambda를 사용한 강좌관리 serverless API
 - https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programmers/timetable
 
 ### 시간표 API - GET 메소드
+- 사용자가 추가한 모든 강좌의 코드를 조회할 수 있는 API
 - queryparameter로 user_key 요청 변수가 있습니다.
 - user_key -> 임의의 사용자 ID 토큰
 
@@ -27,6 +28,7 @@ AWS Lambda를 사용한 강좌관리 serverless API
 - user_key 요청 변수로 API 요청 시 -> user_key로 등록 했던 강좌코드를 모두 반환
 
 ### 시간표 API - POST, DELETE 메소드
+- 사용자가 원하는 강좌를 추가하거나 삭제 할 수 있는 API
 - JSON 으로 requestbody 요청
   {
     "user_key" : "{임의의 사용자 ID 토큰}",
@@ -40,6 +42,6 @@ AWS Lambda를 사용한 강좌관리 serverless API
 ## 개발 과정
 - 개발은 AWS DynamoDB, AWS Lambda, AWS API Gateway, AWS S3를 사용하여 개발
 1. 강좌 데이터는 목록을 csv파일로 만들어 S3 버킷에 csv을 올린 뒤 Lambda 함수로 버킷에 있는 데이터를 로드해 DynamoDB 테이블에 데이터 저장
-2. API Gateway는 Lambda-proxy 타입으로 생성해 개발 - URL Method 별로 Lambda 함수를 분리하지 않고 하나의 파일로 통합 관리 하도록
-3. aws-sdk로 DynamoDB 연동
-4. 요청 resource 별로, httpmethod 별로 각각 조건을 나누어 요청이 들어오면 해당 조건에 맞는 이벤트를 처리
+2. API Gateway는 Lambda-proxy 타입으로 생성 - URL Method 별로 Lambda 함수를 분리하지 않고 하나의 파일로 통합 관리 하도록
+3. 요청이 들어온 resource 별로, httpmethod 별로 각각 조건을 나누어 요청이 들어오면 해당 조건에 맞는 이벤트를 처리
+4. aws-sdk로 DynamoDB 연동 후 조회, 추가, 삭제 기능을 구현
