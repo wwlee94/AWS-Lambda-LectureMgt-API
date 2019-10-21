@@ -4,13 +4,12 @@ AWS Lambda를 사용한 강좌관리 serverless API
 ## 강좌 API URL
 - https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programmers/lecture
 
-### 강좌 API - GET 메소드
+### 1. 강좌 API - GET 메소드 요청 (QueryParameter)
 - 강좌의 목록을 조회할 수 있는 API 
-- queryparameter로 code, lecture 요청 변수가 있습니다.
 - code -> 강좌 코드
 - lecture -> 강좌 이름
 
-### 강좌 GET API - Response 정보
+### 1-1. 강좌 GET API - 요청 별 ResponseBody 정보
 - 요청 변수 없을 시 -> 강좌의 전체 목록 반환
 - code 요청 변수로 API 요청 시 -> code와 일치하는 강좌 코드를 조회해 해당 강좌 정보를 반환
 - lecture 요청 변수로 API 요청 시 -> lecture로 시작하는 강좌명을 모두 반환 (검색 기능)
@@ -18,24 +17,23 @@ AWS Lambda를 사용한 강좌관리 serverless API
 ## 시간표 API URL
 - https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programmers/timetable
 
-### 시간표 API - GET 메소드
+### 1. 시간표 API - GET 메소드 요청 (QueryParameter)
 - 사용자가 추가한 모든 강좌의 코드를 조회할 수 있는 API
-- queryparameter로 user_key 요청 변수가 있습니다.
 - user_key -> 사용자 ID 토큰
 
-### 시간표 GET API - Response 정보
+### 1-1. 시간표 GET API - 요청 별 ResponseBody 정보
 - 요청 변수 없을 시 -> 조회 불가
 - user_key 요청 변수로 API 요청 시 -> user_key로 등록 했던 강좌코드를 모두 반환
 
-### 시간표 API - POST, DELETE 메소드
+### 2. 시간표 API - POST, DELETE 메소드 요청 (RequestBody)
 - 사용자가 원하는 강좌를 추가하거나 삭제 할 수 있는 API
-- JSON 으로 requestbody 요청
-  {
-    "user_key" : "{사용자 ID 토큰}",
-    "code" : "{강좌 코드}"
+- JSON 으로 RequestBody 요청<br>
+  {<br>
+    "user_key" : "{사용자 ID 토큰}",<br>
+    "code" : "{강좌 코드}"<br>
   }
   
-### 시간표 POST, DELETE API - Response 정보
+### 2-1. 시간표 POST, DELETE API - 요청 별 ResponseBody 정보
 - 요청 변수 없을 시 -> 추가, 삭제 불가
 - user_key, code 두가지 함께 API 요청해야 데이터 추가, 삭제 가능
 
