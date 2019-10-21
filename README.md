@@ -37,7 +37,7 @@ AWS Lambda를 사용한 강좌관리 serverless API
 - 요청 변수 없을 시 -> 추가, 삭제 불가
 - user_key, code 두가지 함께 API 요청해야 데이터 추가, 삭제 가능
 
-## 접근 토큰 키
+## 접근 토큰 키 (x-api-key)
 - QJuHAX8evMY24jvpHfHQ4pHGetlk5vn8FJbk70O6
 
 ## 개발 과정
