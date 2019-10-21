@@ -10,7 +10,7 @@ function lectureController(dynamo, operation, queryparam, callback) {
       if ("code" in queryparam && "lecture" in queryparam) {
         if (queryparam["code"] == "" && queryparam["lecture"] == "") {
           callback(null, {
-            'body': errorMessage("/programmers/lecture", "GET", "code, lecture 요청 변수가 비어 있어 조회 할 수 없습니다.")
+            'body': errorMessage("/programmers/lecture", "GET", "code, lecture 요청 변수가 비어 있어 강좌를 조회 할 수 없습니다.")
           });
         }
       }
@@ -32,7 +32,7 @@ function lectureController(dynamo, operation, queryparam, callback) {
             });
           });
         } else callback(null, {
-          'body': errorMessage("/programmers/lecture", "GET", "code 요청 변수가 비어 있어 조회 할 수 없습니다.")
+          'body': errorMessage("/programmers/lecture", "GET", "code 요청 변수가 비어 있어 강좌를 조회 할 수 없습니다.")
         });
       }
       // lecture 값이 있으면
@@ -53,7 +53,7 @@ function lectureController(dynamo, operation, queryparam, callback) {
             });
           });
         } else callback(null, {
-          'body': errorMessage("/programmers/lecture", "GET", "lecture 요청 변수가 비어 있어 조회 할 수 없습니다.")
+          'body': errorMessage("/programmers/lecture", "GET", "lecture 요청 변수가 비어 있어 강좌를 조회 할 수 없습니다.")
         });
       }
     } else {
@@ -189,13 +189,13 @@ function timetableController(dynamo, operation, queryparam, postbody, callback) 
             });
           });
         } else if ("user_key" in postbody && !("code" in postbody)) callback(null, {
-          'body': errorMessage("/programmers/timetable", "DELETE", "code 요청 변수가 없어 데이터를 삽입 할 수 없습니다.")
+          'body': errorMessage("/programmers/timetable", "DELETE", "code 요청 변수가 없어 데이터를 삭제 할 수 없습니다.")
         });
         else if (!("user_key" in postbody) && "code" in postbody) callback(null, {
-          'body': errorMessage("/programmers/timetable", "DELETE", "user_key 요청 변수가 없어 데이터를 삽입 할 수 없습니다.")
+          'body': errorMessage("/programmers/timetable", "DELETE", "user_key 요청 변수가 없어 데이터를 삭제 할 수 없습니다.")
         });
       } else callback(null, {
-        'body': errorMessage("/programmers/timetable", "DELETE", "user_key, code 요청 변수가 없어 데이터를 삽입 할 수 없습니다.")
+        'body': errorMessage("/programmers/timetable", "DELETE", "user_key, code 요청 변수가 없어 데이터를 삭제 할 수 없습니다.")
       });
       break;
     default:
