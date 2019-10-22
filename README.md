@@ -31,12 +31,11 @@ AWS Lambda를 사용한 강좌관리 serverless API
 - 강좌의 목록을 조회할 수 있는 API 
 - code -> 강좌 코드
 - lecture -> 강좌 이름
-- ex) /programmers/lecture?code=강좌코드&lecture=강좌이름
 
 ### 1-1. 강좌 GET API - 요청 별 ResponseBody 정보
 - 요청 변수 없을 시 -> 강좌의 전체 목록 반환
 - code 요청 변수로 API 요청 시 -> code와 일치하는 강좌 코드를 조회해 해당 강좌 정보를 반환
-- lecture 요청 변수로 API 요청 시 -> lecture로 시작하는 강좌명을 모두 반환 (검색 기능)
+- lecture 요청 변수로만 API 요청 시 -> lecture로 시작하는 강좌명을 모두 반환 (검색 기능)
 
 ## 시간표 테이블 컬럼
 | user_key    | lecture_code |
