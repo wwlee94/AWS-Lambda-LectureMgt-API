@@ -10,8 +10,12 @@ def lambda_handler(event, context):
     dyndb = boto3.client('dynamodb', region_name= region)
     confile = s3.get_object(Bucket='aws-lecture-bucket', Key='programmers_lecture.csv')
     recList = confile['Body'].read().decode("utf-8-sig").split('\n')
+    firstrecord = True
     csv_reader = csv.reader(recList, delimiter=',', quotechar='"')
     for row in csv_reader:
+        if firstrecord:
+            firstrecord = False
+            continue
         if len(row) >= 1:
             code = row[0]
             lecture = row[1]
