@@ -17,7 +17,7 @@ module.exports.handler = (event, context, callback) => {
   const body = JSON.parse(event.body);
 
   // 강좌 테이블
-  if (resource === "/programmers/lecture") {
+  if (resource === "/programmers/lectures") {
     if(operation === "GET"){
       lecture.GET(dynamo, queryparam, callback);
     }

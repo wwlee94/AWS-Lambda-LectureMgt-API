@@ -7,7 +7,7 @@ module.exports.GET = function(dynamo, queryparam, callback){
         if (queryparam["code"] === "" && queryparam["lecture"] === "") {
           callback(null, {
             'statusCode': 400,
-            'body': errorMessage("/programmers/lecture", "GET", "code, lecture 요청 변수가 비어 있어 강좌를 조회 할 수 없습니다.")
+            'body': errorMessage("/programmers/lectures", "GET", "code, lecture 요청 변수가 비어 있어 강좌를 조회 할 수 없습니다.")
           });
         }
       }
@@ -30,7 +30,7 @@ module.exports.GET = function(dynamo, queryparam, callback){
           });
         } else callback(null, {
           'statusCode': 400,
-          'body': errorMessage("/programmers/lecture", "GET", "code 요청 변수가 비어 있어 강좌를 조회 할 수 없습니다.")
+          'body': errorMessage("/programmers/lectures", "GET", "code 요청 변수가 비어 있어 강좌를 조회 할 수 없습니다.")
         });
       }
       // lecture 값이 있으면
@@ -52,7 +52,7 @@ module.exports.GET = function(dynamo, queryparam, callback){
           });
         } else callback(null, {
           'statusCode': 400,
-          'body': errorMessage("/programmers/lecture", "GET", "lecture 요청 변수가 비어 있어 강좌를 조회 할 수 없습니다.")
+          'body': errorMessage("/programmers/lectures", "GET", "lecture 요청 변수가 비어 있어 강좌를 조회 할 수 없습니다.")
         });
       }
     } else {

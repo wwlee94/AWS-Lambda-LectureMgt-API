@@ -9,17 +9,17 @@
 ### API 접근 키 (x-api-key)
 - QJuHAX8evMY24jvpHfHQ4pHGetlk5vn8FJbk70O6
 
-## Lecture API (강의 정보 API)
+## Lectures API (강의 정보 API)
 강의 목록을 조회 할 수 있는 API
 ```
-GET /lecture -> 전체 강의 목록을 반환합니다.
+GET /lectures -> 전체 강의 목록을 반환합니다.
 
-GET /lecture?code={강의코드} -> code 값과 동일한 강의 정보가 반환됩니다.
+GET /lectures?code={강의코드} -> code 값과 동일한 강의 정보가 반환됩니다.
 
-GET /lecture?lecture={강의이름} -> lecture로 시작하는 과목명을 모두 반환합니다. (대소문자 구분)
+GET /lectures?lecture={강의이름} -> lecture로 시작하는 과목명을 모두 반환합니다. (대소문자 구분)
 ```
 
-### Lecture 구조
+### Lectures 구조
 | code      | lecture              | professor   | starttime | endtime | dayofweek |
 |-----------|----------------------|-------------|-----------|---------|-----------|
 | GE1807-01 | World Wide English 1 | Caitlyn Lee | 10:30     | 12:30   | 월금      |
@@ -36,12 +36,12 @@ GET /lecture?lecture={강의이름} -> lecture로 시작하는 과목명을 모�
 - endtime -> 강의 종료 시간
 - dayofweek -> 강의 요일
 
-### Lecture API 요청 - GET 메소드
+### Lectures API 요청 - GET 메소드
 강의 목록을 조회 할 수 있는 메소드
 
 #### Request Header 구조
 ```
-GET /lecture
+GET /lectures
 x-api-key: {x-api-key}
 Content-Type: application/json
 ```
@@ -58,7 +58,7 @@ Content-Type: application/json
 
 #### 요청 예시 - cURL
 ```
-curl -G https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programmers/lecture -H "x-api-key : QJuHAX8evMY24jvpHfHQ4pHGetlk5vn8FJbk70O6" -H "Content-Type: application/json"
+curl -G https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programmers/lectures -H "x-api-key : QJuHAX8evMY24jvpHfHQ4pHGetlk5vn8FJbk70O6" -H "Content-Type: application/json"
 ```
 #### Response
 | Status Code               | Description                                       |
