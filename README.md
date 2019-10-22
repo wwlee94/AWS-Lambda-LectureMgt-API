@@ -34,11 +34,7 @@ GET /lecture?lecture={강의이름} -> lecture로 시작하는 과목명을 모�
 - professor -> 교수 이름
 - starttime -> 강의 시작 시간
 - endtime -> 강의 종료 시간
-<<<<<<< HEAD
 - dayofweek -> 강의 요일
-=======
-- dayofweek -> 강의 요일 
->>>>>>> 3230fcbd69a0732bcfe36d97d4d2564f6f641d1f
 
 ### Lecture API 요청 - GET 메소드
 강의 목록을 조회 할 수 있는 메소드
@@ -90,7 +86,6 @@ DELETE /timetable -> 사용자의 추가된 강의 코드를 삭제합니다.
 #### 컬럼 설명
 - user_key -> 사용자 ID 토큰
 - lecture_code -> 강의 코드
-<<<<<<< HEAD
 
 ### Timetable API 요청 - GET 메소드
 사용자 별로 소유한 강의 코드를 조회할 수 있는 메소드
@@ -134,7 +129,6 @@ Content-Type: application/json
 |----------------|--------|-------------|
 | user_key           | String | 사용자 ID 토큰   |
 
->>>>>>> 3230fcbd69a0732bcfe36d97d4d2564f6f641d1f
 #### 요청 예시 - cURL
 ```
 curl -G https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programmers/timetable?user_key=token_key_grepp -H "x-api-key : QJuHAX8evMY24jvpHfHQ4pHGetlk5vn8FJbk70O6" -H "Content-Type: application/json"
@@ -184,11 +178,7 @@ curl -X POST -d "{\"user_key\":\"token_key_grepp\",\"code\":\"GE1807-12\"}" http
 ```
 curl -X DELETE -d "{\"user_key\":\"token_key_grepp\",\"code\":\"GE1807-12\"}" https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programmers/timetable -H "x-api-key : QJuHAX8evMY24jvpHfHQ4pHGetlk5vn8FJbk70O6" -H "Content-Type: application/json"
 ```
-<<<<<<< HEAD
 
-=======
-  
->>>>>>> 3230fcbd69a0732bcfe36d97d4d2564f6f641d1f
 ## 주의 사항
 ### cURL 한글 깨짐 현상
 windows의 콘솔창은 기본 cp949 형식이며, utf-8 인코딩의 한글은 출력할 시에 깨지게 됩니다.
