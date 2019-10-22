@@ -16,24 +16,21 @@ module.exports.handler = (event, context, callback) => {
   // post body
   const body = JSON.parse(event.body);
 
-  // x-api-key
-  // const token_key 
-
   // 강좌 테이블
-  if (resource == "/programmers/lecture") {
-    if(operation == "GET"){
+  if (resource === "/programmers/lecture") {
+    if(operation === "GET"){
       lecture.GET(dynamo, queryparam, callback);
     }
   }
   //시간표 테이블
-  else if (resource == "/programmers/timetable") {
-    if(operation == "GET"){
+  else if (resource === "/programmers/timetable") {
+    if(operation === "GET"){
       timetable.GET(dynamo, queryparam, body, callback);
     }
-    else if(operation == "POST"){
+    else if(operation === "POST"){
       timetable.POST(dynamo, queryparam, body, callback);
     }
-    else if(operation == "DELETE"){
+    else if(operation === "DELETE"){
       timetable.DELETE(dynamo, queryparam, body, callback);
     }
   }
