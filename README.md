@@ -107,8 +107,6 @@ Content-Type: application/json
 |----------------|--------|-------------|
 | user_key           | String | 사용자 ID 토큰   |
 
-=======
-
 ### Timetable API 요청 - GET 메소드
 사용자 별로 소유한 강의 코드를 조회할 수 있는 메소드
 - 요청 변수 없을 시 -> 추가, 삭제 불가
