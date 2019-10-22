@@ -72,7 +72,7 @@ curl -G https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programme
 사용자별로 추가한 강의를 조회, 추가, 삭제 할 수 있는 API
 
 ```
-GET /timetable?user_key?{사용자 ID 토큰} -> user_key로 등록 했던 강의 코드를 모두 반환
+GET /timetable?user_key={사용자 ID 토큰} -> user_key로 등록 했던 강의 코드를 모두 반환
 
 POST /timetable -> 사용자가 새로운 강의 코드를 추가합니다.
 
