@@ -1,5 +1,5 @@
 # 프로그래머스 윈터 코딩 앱 개발 과제 - 강의 관리 API
-강의 목록을 조회할 수 있고 사용자 ID별로 추가한 강의코드를 조회, 저장, 삭제 해주는 API
+강의 목록을 조회할 수 있고 각 사용자별로 추가한 강의를 조회, 저장, 삭제 해주는 API
 
 # API REFERENCE
 
@@ -19,7 +19,7 @@ GET /lecture?code={강의코드} -> code 값과 동일한 강의 정보가 반�
 GET /lecture?lecture={강의이름} -> lecture로 시작하는 과목명을 모두 반환합니다. (대소문자 구분)
 ```
 
-### Lecture 테이블 구조 (강의 정보 테이블)
+### Lecture 구조
 | code      | lecture              | professor   | starttime | endtime | dayofweek |
 |-----------|----------------------|-------------|-----------|---------|-----------|
 | GE1807-01 | World Wide English 1 | Caitlyn Lee | 10:30     | 12:30   | 월금      |
@@ -39,7 +39,7 @@ GET /lecture?lecture={강의이름} -> lecture로 시작하는 과목명을 모�
 ### Lecture API 요청 - GET 메소드
 강의 목록을 조회 할 수 있는 메소드
 
-#### Request
+#### Request Header 구조
 ```
 GET /lecture
 x-api-key: {x-api-key}
@@ -60,9 +60,16 @@ Content-Type: application/json
 ```
 curl -G https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programmers/lecture -H "x-api-key : QJuHAX8evMY24jvpHfHQ4pHGetlk5vn8FJbk70O6" -H "Content-Type: application/json"
 ```
+#### Response
+| Status Code               | Description                                       |
+|---------------------------|---------------------------------------------------|
+| 200 OK                    | 성공                                              |
+| 400 Bad Request           | 클라이언트 요청 오류 - code, lecture가 빈 값일 때  |
+| 403 Forbidden             | x-api-key 인증 에러 or URL 경로 오류             |
+| 500 Internal Server Error | 서버에 문제가 있을 경우                           |
 
-## TimeTable API (시간표 정보 API)
-각 사용자가 추가한 강의코드를 조회, 추가, 삭제 할 수 있는 API
+## TimeTable API (사용자별 강의 코드 API)
+사용자별로 추가한 강의를 조회, 추가, 삭제 할 수 있는 API
 
 ```
 GET /timetable?user_key?{사용자 ID 토큰} -> user_key로 등록 했던 강의 코드를 모두 반환
@@ -72,7 +79,7 @@ POST /timetable -> 사용자가 새로운 강의 코드를 추가합니다.
 DELETE /timetable -> 사용자의 추가된 강의 코드를 삭제합니다.
 ```
 
-### Timetable 테이블 (각 사용자의 강의 코드 테이블)
+### Timetable 구조
 | user_key    | lecture_code |
 |-------------|--------------|
 | {user_id_token} | GE1807-01    |
@@ -88,30 +95,10 @@ DELETE /timetable -> 사용자의 추가된 강의 코드를 삭제합니다.
 - lecture_code -> 강의 코드
 
 ### Timetable API 요청 - GET 메소드
-사용자 별로 소유한 강의 코드를 조회할 수 있는 메소드
+사용자별로 추가한 강의 코드를 모두 조회할 수 있는 메소드
 - 요청 변수 없을 시 -> 추가, 삭제 불가
 
-#### Request
-```
-GET /timetable
-x-api-key: {x-api-key}
-Content-Type: application/json
-```
-| Header      | Description                      |
-|-----------|----------------------------------|
-| x-api-key | 강의 관리 API를 이용하기 위한 key |
-
-#### QueryParameter
-
-| Parameter | Type   | Description |
-|----------------|--------|-------------|
-| user_key           | String | 사용자 ID 토큰   |
-
-### Timetable API 요청 - GET 메소드
-사용자 별로 소유한 강의 코드를 조회할 수 있는 메소드
-- 요청 변수 없을 시 -> 추가, 삭제 불가
-
-#### Request
+#### Request Header 구조
 ```
 GET /timetable
 x-api-key: {x-api-key}
@@ -132,18 +119,26 @@ Content-Type: application/json
 curl -G https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programmers/timetable?user_key=token_key_grepp -H "x-api-key : QJuHAX8evMY24jvpHfHQ4pHGetlk5vn8FJbk70O6" -H "Content-Type: application/json"
 ```
 
+#### Response
+| Status Code               | Description                                       |
+|---------------------------|---------------------------------------------------|
+| 200 OK                    | 성공                                              |
+| 400 Bad Request           | 클라이언트 요청 오류 - user_key가 없거나 빈값일 때  |
+| 403 Forbidden             | x-api-key 인증 에러 or URL 경로 오류             |
+| 500 Internal Server Error | 서버에 문제가 있을 경우                           |
+
 ### Timetable API 요청 - POST, DELETE 메소드
-사용자 별로 소유한 강의 코드를 추가, 삭제 할 수 있는 메소드
+사용자별로 원하는 강의 코드를 추가, 삭제 할 수 있는 메소드
 - 요청 변수 없을 시 -> 추가, 삭제 불가
 - user_key, code 두가지 함께 API 요청해야 데이터 추가, 삭제 가능
 
-#### Request POST
+#### Request Header 구조
 ```
 POST /timetable
 x-api-key: {x-api-key}
 Content-Type: application/json
 ```
-#### Request DELETE
+
 ```
 DELETE /timetable
 x-api-key: {x-api-key}
@@ -177,6 +172,14 @@ curl -X POST -d "{\"user_key\":\"token_key_grepp\",\"code\":\"GE1807-12\"}" http
 curl -X DELETE -d "{\"user_key\":\"token_key_grepp\",\"code\":\"GE1807-12\"}" https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programmers/timetable -H "x-api-key : QJuHAX8evMY24jvpHfHQ4pHGetlk5vn8FJbk70O6" -H "Content-Type: application/json"
 ```
 
+#### Response
+| Status Code               | Description                                       |
+|---------------------------|---------------------------------------------------|
+| 200 OK                    | 성공                                              |
+| 400 Bad Request           | 클라이언트 요청 오류 - user_key, code 가 없거나 빈 값일때  |
+| 403 Forbidden             | x-api-key 인증 에러 or URL 경로 오류             |
+| 500 Internal Server Error | 서버에 문제가 있을 경우                           |
+
 ## 주의 사항
 ### cURL 한글 깨짐 현상
 windows의 콘솔창은 기본 cp949 형식이며, utf-8 인코딩의 한글은 출력할 시에 깨지게 됩니다.
@@ -189,7 +192,7 @@ windows의 콘솔창은 기본 cp949 형식이며, utf-8 인코딩의 한글은 
 4. 한글 결과가 나오는 rest url을 호출하면 정상적으로 호출되는 것을 확인하실 수 있습니다.
 5. Lecture API cURL요청시 https://www.url-encode-decode.com/ 에서 한글만 인코딩 후 요청해야 잘 출력됩니다.
 
-## 개발 과정
+## 개발 배경
 - 개발은 AWS DynamoDB, AWS Lambda, AWS API Gateway, AWS S3를 사용하여 개발
 1. 강좌 데이터는 목록을 csv파일로 만들어 S3 버킷에 csv을 올린 뒤 Lambda 함수로 버킷에 있는 데이터를 로드해 DynamoDB 테이블에 데이터 저장
 2. API Gateway는 Lambda-proxy 타입으로 생성 - URL Method 별로 Lambda 함수를 분리하지 않고 하나의 Lambda 함수로 통합 관리 하도록
