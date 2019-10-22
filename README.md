@@ -65,7 +65,7 @@ curl -G https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programme
 각 사용자가 추가한 강의코드를 조회, 추가, 삭제 할 수 있는 API
 
 ```
-GET /timetable?user_key?{사용자 ID 토큰} -> user_key로 등록 했던 강 코드를 모두 반환
+GET /timetable?user_key?{사용자 ID 토큰} -> user_key로 등록 했던 강의 코드를 모두 반환
 
 POST /timetable -> 사용자가 새로운 강의 코드를 추가합니다.
 
@@ -75,8 +75,8 @@ DELETE /timetable -> 사용자의 추가된 강의 코드를 삭제합니다.
 ### Timetable 테이블 (각 사용자의 강의 코드 테이블)
 | user_key    | lecture_code |
 |-------------|--------------|
-| {token_key} | GE1807-01    |
-| {token_key} | GE1807-15    |
+| {user_id_token} | GE1807-01    |
+| {user_id_token} | GE1807-15    |
 | ..          | ..           |
 
 테이블은 NoSQL DB인 AWS DynamoDB로 설계
@@ -117,7 +117,6 @@ curl -G https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programme
 - 요청 변수 없을 시 -> 추가, 삭제 불가
 - user_key, code 두가지 함께 API 요청해야 데이터 추가, 삭제 가능
 
-
 #### Request POST
 ```
 POST /timetable
@@ -138,7 +137,7 @@ Content-Type: application/json
 #### RequestBody 요청 예시
 ```
 {
-  "user_key":"{사용자 ID 토큰}",
+  "user_key":"{user_id_token}",
   "code" : "GE1807-01"
 }
 ```
@@ -168,6 +167,7 @@ windows의 콘솔창은 기본 cp949 형식이며, utf-8 인코딩의 한글은 
 3. 커맨드라인에 아래와 같이 입력합니다. ( utf-8(65001)로 변경 )
     > chcp 65001
 4. 한글 결과가 나오는 rest url을 호출하면 정상적으로 호출되는 것을 확인하실 수 있습니다.
+5. Lecture API cURL요청시 https://www.url-encode-decode.com/ 에서 한글만 인코딩 후 요청해야 잘 출력됩니다.
 
 ## 개발 과정
 - 개발은 AWS DynamoDB, AWS Lambda, AWS API Gateway, AWS S3를 사용하여 개발
