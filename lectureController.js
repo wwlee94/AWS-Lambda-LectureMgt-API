@@ -6,6 +6,7 @@ module.exports.GET = function(dynamo, queryparam, callback){
       if ("code" in queryparam && "lecture" in queryparam) {
         if (queryparam["code"] == "" && queryparam["lecture"] == "") {
           callback(null, {
+            'statucCode': 400,
             'body': errorMessage("/programmers/lecture", "GET", "code, lecture 요청 변수가 비어 있어 강좌를 조회 할 수 없습니다.")
           });
         }
@@ -28,6 +29,7 @@ module.exports.GET = function(dynamo, queryparam, callback){
             });
           });
         } else callback(null, {
+          'statucCode': 400,
           'body': errorMessage("/programmers/lecture", "GET", "code 요청 변수가 비어 있어 강좌를 조회 할 수 없습니다.")
         });
       }
@@ -49,6 +51,7 @@ module.exports.GET = function(dynamo, queryparam, callback){
             });
           });
         } else callback(null, {
+          'statucCode': 400,
           'body': errorMessage("/programmers/lecture", "GET", "lecture 요청 변수가 비어 있어 강좌를 조회 할 수 없습니다.")
         });
       }

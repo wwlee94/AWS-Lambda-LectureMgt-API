@@ -16,6 +16,9 @@ module.exports.handler = (event, context, callback) => {
   // post body
   const body = JSON.parse(event.body);
 
+  // x-api-key
+  // const token_key 
+
   // 강좌 테이블
   if (resource == "/programmers/lecture") {
     if(operation == "GET"){

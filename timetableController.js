@@ -22,10 +22,12 @@ module.exports.GET = function(dynamo, queryparam, postbody, callback){
             });
           });
         } else callback(null, {
+          'statucCode': 400,
           'body': errorMessage("/programmers/timetable", "GET", "user_key 요청 변수가 비어 있어 시간표를 조회 할 수 없습니다.")
         });
       }
     } else callback(null, {
+      'statucCode': 400,
       'body': errorMessage("/programmers/timetable", "GET", "user_key 요청 변수가 없어 시간표를 조회 할 수 없습니다.")
     });
 
@@ -72,16 +74,20 @@ module.exports.POST = function(dynamo, queryparam, postbody, callback){
             });
           });
         } else callback(null, {
+          'statucCode': 400,
           'body': errorMessage("/programmers/timetable", "POST", "중복되는 데이터가 존재합니다.")
         });
       });
     } else if ("user_key" in postbody && !("code" in postbody)) callback(null, {
+      'statucCode': 400,
       'body': errorMessage("/programmers/timetable", "POST", "code 요청 변수가 없어 데이터를 삽입 할 수 없습니다.")
     });
     else if (!("user_key" in postbody) && "code" in postbody) callback(null, {
+      'statucCode': 400,
       'body': errorMessage("/programmers/timetable", "POST", "lecture 요청 변수가 없어 데이터를 삽입 할 수 없습니다.")
     });
   } else callback(null, {
+    'statucCode': 400,
     'body': errorMessage("/programmers/timetable", "POST", "code, lecture 요청 변수가 없어 데이터를 삽입 할 수 없습니다.")
   });
 }
@@ -119,12 +125,15 @@ module.exports.DELETE = function(dynamo, queryparam, postbody, callback){
         });
       });
     } else if ("user_key" in postbody && !("code" in postbody)) callback(null, {
+      'statucCode': 400,
       'body': errorMessage("/programmers/timetable", "DELETE", "code 요청 변수가 없어 데이터를 삭제 할 수 없습니다.")
     });
     else if (!("user_key" in postbody) && "code" in postbody) callback(null, {
+      'statucCode': 400,
       'body': errorMessage("/programmers/timetable", "DELETE", "user_key 요청 변수가 없어 데이터를 삭제 할 수 없습니다.")
     });
   } else callback(null, {
+    'statucCode': 400,
     'body': errorMessage("/programmers/timetable", "DELETE", "user_key, code 요청 변수가 없어 데이터를 삭제 할 수 없습니다.")
   });
 
