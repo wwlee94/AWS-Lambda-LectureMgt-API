@@ -65,7 +65,7 @@ curl -G https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programme
 |---------------------------|---------------------------------------------------|
 | 200 OK                    | 성공                                              |
 | 400 Bad Request           | 클라이언트 요청 오류 - code, lecture가 빈 값일 때  |
-| 403 Forbidden             | x-api-key 인증 에러 or URL 경로 오류             |
+| 403 Forbidden             | x-api-key 인증 에러 or URL 경로, HTTP method 오류 |
 | 500 Internal Server Error | 서버에 문제가 있을 경우                           |
 
 ## TimeTable API (사용자별 강의 코드 API)
@@ -124,7 +124,7 @@ curl -G https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programme
 |---------------------------|---------------------------------------------------|
 | 200 OK                    | 성공                                              |
 | 400 Bad Request           | 클라이언트 요청 오류 - user_key가 없거나 빈값일 때  |
-| 403 Forbidden             | x-api-key 인증 에러 or URL 경로 오류             |
+| 403 Forbidden             | x-api-key 인증 에러 or URL 경로, HTTP method 오류 |
 | 500 Internal Server Error | 서버에 문제가 있을 경우                           |
 
 ### Timetable API 요청 - POST, DELETE 메소드
@@ -177,11 +177,11 @@ curl -X DELETE -d "{\"user_key\":\"token_key_grepp\",\"code\":\"GE1807-12\"}" ht
 |---------------------------|---------------------------------------------------|
 | 200 OK                    | 성공                                              |
 | 400 Bad Request           | 클라이언트 요청 오류 - user_key, code 가 없거나 빈 값일때  |
-| 403 Forbidden             | x-api-key 인증 에러 or URL 경로 오류             |
+| 403 Forbidden             | x-api-key 인증 에러 or URL 경로, HTTP method 오류             |
 | 500 Internal Server Error | 서버에 문제가 있을 경우                           |
 
 ## 주의 사항
-### cURL 한글 깨짐 현상
+#### cURL 한글 깨짐 현상
 windows의 콘솔창은 기본 cp949 형식이며, utf-8 인코딩의 한글은 출력할 시에 깨지게 됩니다.
 아래를 통해 한글 깨짐을 방지할 수 있습니다.
 1. 콘솔창을 호출하여 우클릭 > 속성 을 호출합니다.
@@ -190,7 +190,10 @@ windows의 콘솔창은 기본 cp949 형식이며, utf-8 인코딩의 한글은 
 3. 커맨드라인에 아래와 같이 입력합니다. ( utf-8(65001)로 변경 )
     > chcp 65001
 4. 한글 결과가 나오는 rest url을 호출하면 정상적으로 호출되는 것을 확인하실 수 있습니다.
-5. Lectures API cURL요청시 https://www.url-encode-decode.com/ 에서 한글만 인코딩 후 요청해야 잘 출력됩니다.
+
+#### cURL queryparam 요청시
+Lectures API cURL요청시 https://www.url-encode-decode.com/ 에서 한글만 인코딩 후 요청해야 잘 출력됩니다.
+    > ex) 논리 -> %EB%85%BC%EB%A6%AC
 
 ## 개발 배경
 - 개발은 AWS DynamoDB, AWS Lambda, AWS API Gateway, AWS S3를 사용하여 개발
