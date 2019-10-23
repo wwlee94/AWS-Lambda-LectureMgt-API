@@ -65,7 +65,8 @@ curl -G https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programme
 |---------------------------|---------------------------------------------------|
 | 200 OK                    | 성공                                              |
 | 400 Bad Request           | 클라이언트 요청 오류 - code, lecture가 빈 값일 때  |
-| 403 Forbidden             | x-api-key 인증 에러 or URL 경로, HTTP method 오류 |
+| 401 Unauthorized          | x-api-key 인증 에러                               |
+| 403 Forbidden             | URL 경로, HTTP method 오류                        |
 | 500 Internal Server Error | 서버에 문제가 있을 경우                           |
 
 ## TimeTable API (사용자별 강의 코드 API)
@@ -124,7 +125,8 @@ curl -G https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programme
 |---------------------------|---------------------------------------------------|
 | 200 OK                    | 성공                                              |
 | 400 Bad Request           | 클라이언트 요청 오류 - user_key가 없거나 빈값일 때  |
-| 403 Forbidden             | x-api-key 인증 에러 or URL 경로, HTTP method 오류 |
+| 401 Unauthorized          | x-api-key 인증 에러                               |
+| 403 Forbidden             |  URL 경로, HTTP method 오류                       |
 | 500 Internal Server Error | 서버에 문제가 있을 경우                           |
 
 ### Timetable API 요청 - POST, DELETE 메소드
@@ -177,7 +179,8 @@ curl -X DELETE -d "{\"user_key\":\"token_key_grepp\",\"code\":\"GE1807-12\"}" ht
 |---------------------------|---------------------------------------------------|
 | 200 OK                    | 성공                                              |
 | 400 Bad Request           | 클라이언트 요청 오류 - user_key, code 가 없거나 빈 값일때  |
-| 403 Forbidden             | x-api-key 인증 에러 or URL 경로, HTTP method 오류             |
+| 401 Unauthorized          | x-api-key 인증 에러                               |
+| 403 Forbidden             | URL 경로, HTTP method 오류                         |
 | 500 Internal Server Error | 서버에 문제가 있을 경우                           |
 
 ## 주의 사항
