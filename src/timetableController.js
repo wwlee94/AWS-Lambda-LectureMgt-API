@@ -1,4 +1,5 @@
 var errorMessage = require("./errorMessage");
+var request = require("request");
 
 // timetable GET 요청
 module.exports.GET = function(dynamo, queryparam, postbody, callback) {
@@ -30,68 +31,103 @@ module.exports.GET = function(dynamo, queryparam, postbody, callback) {
     'statusCode': 400,
     'body': errorMessage("/programmers/timetable", "GET", "user_key 요청 변수가 없어 시간표를 조회 할 수 없습니다.")
   });
-
-}
+};
 // timetable POST 요청
 module.exports.POST = function(dynamo, queryparam, postbody, callback) {
+  var token_validation = false;
   //validation
   if (postbody !== null) {
     if ("user_key" in postbody && "code" in postbody) {
-      //데이터 중복 검사
-      var params = {
-        TableName: 'programmers_timetable',
-        KeyConditionExpression: "user_key = :key and lecture_code = :code",
-        ExpressionAttributeValues: {
-          ":key": postbody["user_key"],
-          ":code": postbody["code"]
-        }
-      };
-      dynamo.query(params, (err, data) => {
-        var insertState = true
-        if (data["Count"] !== 0) insertState = false;
-
-        if (insertState) {
-          //데이터 추가 작업
-          var params = {
-            TableName: 'programmers_timetable',
-            Item: {
-              "user_key": postbody["user_key"],
-              "lecture_code": postbody["code"]
-            }
+      //user_key 값이 존재할 때
+      if (postbody["user_key"] != "") {
+        const options = {
+          uri: "https://www.programmers.co.kr/api/assignment_api/check_if_valid_token",
+          qs: {
+            token: postbody["user_key"]
           }
-          var text = "";
-          var status = 200;
-          dynamo.put(params, (err, data) => {
-            if (err) {
-              text = JSON.stringify({
-                "message": "데이터 삽입 에러 - " + err
+        };
+        // 사용자 ID 토큰 valid 요청
+        request(options, function(err, response, body) {
+          //callback
+          body = JSON.parse(body);
+          token_validation = body["valid"];
+          // 토큰이 검증 되었으면
+          if (token_validation) {
+            //데이터 중복 검사
+            var params = {
+              TableName: 'programmers_timetable',
+              KeyConditionExpression: "user_key = :key and lecture_code = :code",
+              ExpressionAttributeValues: {
+                ":key": postbody["user_key"],
+                ":code": postbody["code"]
+              }
+            };
+
+            dynamo.query(params, (err, data) => {
+              var insertState = true
+              if (data["Count"] !== 0) insertState = false;
+
+              if (insertState) {
+                //데이터 추가 작업
+                var params = {
+                  TableName: 'programmers_timetable',
+                  Item: {
+                    "user_key": postbody["user_key"],
+                    "lecture_code": postbody["code"]
+                  }
+                }
+                var text = "";
+                var status = 200;
+
+                dynamo.put(params, (err, data) => {
+                  if (err) {
+                    text = JSON.stringify({
+                      "message": "강의 코드 삽입 에러 - " + err
+                    });
+                    status = 500;
+                  } else text = JSON.stringify({
+                    "user_key": postbody["user_key"],
+                    "code" : postbody["code"],
+                    "message": "강의 코드 삽입 성공 !"
+                  });
+
+                  callback(null, {
+                    'statusCode': status,
+                    'headers': {},
+                    'body': text
+                  });
+                });
+              } else callback(null, {
+                'statusCode': 422,
+                'body': errorMessage("/programmers/timetable", "POST", "중복되는 데이터가 존재합니다.")
               });
-              status = 400;
-            } else text = JSON.stringify({
-              "message": "데이터 삽입 성공 !"
             });
+          }
+          // token이 유효하지 않을 때
+          else{
             callback(null, {
-              'statusCode': status,
-              'headers': {},
-              'body': text
+              'statusCode': 422,
+              'body': errorMessage("/programmers/timetable", "POST", "유효한 사용자 ID 토큰이 아닙니다. 정확한 프로그래머스 사용자 ID 토큰을 요청해주세요.")
             });
-          });
-        } else callback(null, {
-          'statusCode': 400,
-          'body': errorMessage("/programmers/timetable", "POST", "중복되는 데이터가 존재합니다.")
+          }
         });
+      } else callback(null, {
+        'statusCode': 400,
+        'body': errorMessage("/programmers/timetable", "POST", "user_key 요청 변수가 비어 있어 데이터를 삽입 할 수 없습니다.")
       });
-    } else if ("user_key" in postbody && !("code" in postbody)) callback(null, {
+    }
+    // user_key & code가 존재하는지 여부
+    else if ("user_key" in postbody && !("code" in postbody)) callback(null, {
       'statusCode': 400,
       'body': errorMessage("/programmers/timetable", "POST", "code 요청 변수가 없어 데이터를 삽입 할 수 없습니다.")
     });
     else if (!("user_key" in postbody) && "code" in postbody) callback(null, {
       'statusCode': 400,
-      'body': errorMessage("/programmers/timetable", "POST", "lecture 요청 변수가 없어 데이터를 삽입 할 수 없습니다.")
+      'body': errorMessage("/programmers/timetable", "POST", "user_key 요청 변수가 없어 데이터를 삽입 할 수 없습니다.")
     });
   } else callback(null, {
     'statusCode': 400,
-    'body': errorMessage("/programmers/timetable", "POST", "code, lecture 요청 변수가 없어 데이터를 삽입 할 수 없습니다.")
+    'body': errorMessage("/programmers/timetable", "POST", "user_key, code 요청 변수가 없어 데이터를 삽입 할 수 없습니다.")
   });
 }
 
@@ -118,11 +154,13 @@ module.exports.DELETE = function(dynamo, queryparam, postbody, callback) {
       dynamo.delete(params, (err, data) => {
         if (err) {
           text = JSON.stringify({
-            "message": "데이터 삭제 에러 - " + err
+            "message": "강의 코드 삭제 에러 - " + err
           });
-          status = 400;
+          status = 422;
         } else text = JSON.stringify({
-          "message": "데이터 삭제 성공 !"
+          "user_key": postbody["user_key"],
+          "code" : postbody["code"],
+          "message": "강의 코드 삭제 성공 !"
         });
         callback(null, {
           'statusCode': status,

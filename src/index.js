@@ -23,12 +23,6 @@ module.exports.handler = (event, context, callback) => {
     if(operation === "GET"){
       lecture.GET(dynamo, queryparam, callback);
     }
-    else{
-      callback(null, {
-        'statusCode': 405,
-        'body': errorMessage(resource, operation, "Method Not Allowed - 지정된 Method는 사용할 수 없습니다.")
-      });
-    }
   }
   //시간표 테이블
   else if (resource === "/programmers/timetable") {
@@ -41,18 +35,5 @@ module.exports.handler = (event, context, callback) => {
     else if(operation === "DELETE"){
       timetable.DELETE(dynamo, queryparam, body, callback);
     }
-    else{
-      callback(null, {
-        'statusCode': 405,
-        'body': errorMessage(resource, operation, "Method Not Allowed - 지정된 Method는 사용할 수 없습니다.")
-      });
-    }
-  }
-  // resource error
-  else{
-    callback(null, {
-      'statusCode': 404,
-      'body': errorMessage(resource, operation, "Not Found - 요청한 페이지(Resource)를 찾을 수 없습니다.")
-    });
   }
 };

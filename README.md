@@ -49,7 +49,7 @@ Content-Type: application/json
 |-----------|----------------------------------|
 | x-api-key | 강의 관리 API를 이용하기 위한 key |
 
-#### QueryParameter
+#### QueryParameter (선택)
 
 | Parameter | Type   | Description |
 |----------------|--------|-------------|
@@ -64,8 +64,8 @@ curl -G https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programme
 | Status Code               | Description                                       |
 |---------------------------|---------------------------------------------------|
 | 200 OK                    | 성공                                              |
-| 400 Bad Request           | 클라이언트 요청 오류 - code, lecture가 빈 값일 때  |
-| 401 Unauthorized          | x-api-key 인증 에러                               |
+| 400 Bad Request           | 클라이언트 요청 오류 - code, lecture가 빈값일 때  |
+| 403 Forbidden             | x-api-key 인증 에러                               |
 | 403 Forbidden             | URL 경로, HTTP method 오류                        |
 | 500 Internal Server Error | 서버에 문제가 있을 경우                           |
 
@@ -92,7 +92,7 @@ DELETE /timetable -> 사용자의 추가된 강의 코드를 삭제합니다.
 - Sort key -> lecture_code
 
 #### 컬럼 설명
-- user_key -> 사용자 ID 토큰
+- user_key -> 사용자 ID 토큰 (프로그래머스에서 지급 받은 토큰)
 - lecture_code -> 강의 코드
 
 ### Timetable API 요청 - GET 메소드
@@ -109,11 +109,11 @@ Content-Type: application/json
 |-----------|----------------------------------|
 | x-api-key | 강의 관리 API를 이용하기 위한 key |
 
-#### QueryParameter
+#### QueryParameter (필수)
 
 | Parameter | Type   | Description |
 |----------------|--------|-------------|
-| user_key           | String | 사용자 ID 토큰   |
+| user_key           | String | 사용자 ID 토큰 (프로그래머스에서 지급 받은 토큰)   |
 
 #### 요청 예시 - cURL
 ```
@@ -125,8 +125,8 @@ curl -G https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programme
 |---------------------------|---------------------------------------------------|
 | 200 OK                    | 성공                                              |
 | 400 Bad Request           | 클라이언트 요청 오류 - user_key가 없거나 빈값일 때  |
-| 401 Unauthorized          | x-api-key 인증 에러                               |
-| 403 Forbidden             |  URL 경로, HTTP method 오류                       |
+| 403 Forbidden             | x-api-key 인증 에러                               |
+| 403 Forbidden             | URL 경로, HTTP method 오류                        |
 | 500 Internal Server Error | 서버에 문제가 있을 경우                           |
 
 ### Timetable API 요청 - POST, DELETE 메소드
@@ -151,7 +151,7 @@ Content-Type: application/json
 |-----------|----------------------------------|
 | x-api-key | 강의 관리 API를 이용하기 위한 key |
 
-#### RequestBody 요청 예시
+#### RequestBody 요청 예시 (필수)
 ```
 {
   "user_key":"{user_id_token}",
@@ -161,7 +161,7 @@ Content-Type: application/json
 
 | Parameter | Type   | Description |
 |----------------|--------|-------------|
-| user_key    | String | 사용자 ID 토큰   |
+| user_key    | String | 사용자 ID 토큰 (프로그래머스에서 지급 받은 토큰)   |
 | code       | String | 강의 코드   |
 
 #### 요청 예시 - cURL
@@ -178,9 +178,12 @@ curl -X DELETE -d "{\"user_key\":\"token_key_grepp\",\"code\":\"GE1807-12\"}" ht
 | Status Code               | Description                                       |
 |---------------------------|---------------------------------------------------|
 | 200 OK                    | 성공                                              |
-| 400 Bad Request           | 클라이언트 요청 오류 - user_key, code 가 없거나 빈 값일때  |
-| 401 Unauthorized          | x-api-key 인증 에러                               |
-| 403 Forbidden             | URL 경로, HTTP method 오류                         |
+| 400 Bad Request           | 클라이언트 요청 오류 - user_key, code 가 없거나 빈값일때|
+| 422 Unprocessable Entity  | 데이터 추가시 유효하지 않은 사용자 ID 토큰일 떄          |
+| 422 Unprocessable Entity  | 데이터 추가시 이미 있는 데이터가 존재할 때          |
+| 422 Unprocessable Entity  | 데이터 삭제시 없는 데이터를 삭제할 때              |
+| 403 Forbidden             | x-api-key 인증 에러                               |
+| 403 Forbidden             | URL 경로, HTTP method 오류                        |
 | 500 Internal Server Error | 서버에 문제가 있을 경우                           |
 
 ## 주의 사항
@@ -198,7 +201,7 @@ windows의 콘솔창은 기본 cp949 형식이며, utf-8 인코딩의 한글은 
 * Lectures API cURL요청시 https://www.url-encode-decode.com/ 에서 한글만 인코딩 후 요청해야 잘 출력됩니다.
     > ex) 논리 -> %EB%85%BC%EB%A6%AC
 
-## 개발 배경
+## 개발 루트
 - 개발은 AWS DynamoDB, AWS Lambda, AWS API Gateway, AWS S3를 사용하여 개발
 1. 강좌 데이터는 목록을 csv파일로 만들어 S3 버킷에 csv을 올린 뒤 Lambda 함수로 버킷에 있는 데이터를 로드해 DynamoDB 테이블에 데이터 저장
 2. API Gateway는 Lambda-proxy 타입으로 생성 - URL Method 별로 Lambda 함수를 분리하지 않고 하나의 Lambda 함수로 통합 관리 하도록
