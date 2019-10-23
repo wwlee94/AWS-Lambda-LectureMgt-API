@@ -53,58 +53,11 @@ module.exports.POST = function(dynamo, queryparam, postbody, callback) {
           token_validation = body["valid"];
           // 토큰이 검증 되었으면
           if (token_validation) {
-            //데이터 중복 검사
-            var params = {
-              TableName: 'programmers_timetable',
-              KeyConditionExpression: "user_key = :key and lecture_code = :code",
-              ExpressionAttributeValues: {
-                ":key": postbody["user_key"],
-                ":code": postbody["code"]
-              }
-            };
-
-            dynamo.query(params, (err, data) => {
-              var insertState = true
-              if (data["Count"] !== 0) insertState = false;
-
-              if (insertState) {
-                //데이터 추가 작업
-                var params = {
-                  TableName: 'programmers_timetable',
-                  Item: {
-                    "user_key": postbody["user_key"],
-                    "lecture_code": postbody["code"]
-                  }
-                }
-                var text = "";
-                var status = 200;
-
-                dynamo.put(params, (err, data) => {
-                  if (err) {
-                    text = JSON.stringify({
-                      "message": "강의 코드 삽입 에러 - " + err
-                    });
-                    status = 500;
-                  } else text = JSON.stringify({
-                    "user_key": postbody["user_key"],
-                    "code" : postbody["code"],
-                    "message": "강의 코드 삽입 성공 !"
-                  });
-
-                  callback(null, {
-                    'statusCode': status,
-                    'headers': {},
-                    'body': text
-                  });
-                });
-              } else callback(null, {
-                'statusCode': 422,
-                'body': errorMessage("/programmers/timetable", "POST", "중복되는 데이터가 존재합니다.")
-              });
-            });
+            // 강의 중복검사 & 강의 코드 추가
+            searchOverlapLecture(dynamo, postbody, callback);
           }
           // token이 유효하지 않을 때
-          else{
+          else {
             callback(null, {
               'statusCode': 422,
               'body': errorMessage("/programmers/timetable", "POST", "유효한 사용자 ID 토큰이 아닙니다. 정확한 프로그래머스 사용자 ID 토큰을 요청해주세요.")
@@ -159,7 +112,7 @@ module.exports.DELETE = function(dynamo, queryparam, postbody, callback) {
           status = 422;
         } else text = JSON.stringify({
           "user_key": postbody["user_key"],
-          "code" : postbody["code"],
+          "code": postbody["code"],
           "message": "강의 코드 삭제 성공 !"
         });
         callback(null, {
@@ -180,5 +133,64 @@ module.exports.DELETE = function(dynamo, queryparam, postbody, callback) {
     'statusCode': 400,
     'body': errorMessage("/programmers/timetable", "DELETE", "user_key, code 요청 변수가 없어 데이터를 삭제 할 수 없습니다.")
   });
+}
 
+//강의 코드 추가
+function insertLecture(dynamo, postbody, callback) {
+  var params = {
+    TableName: 'programmers_timetable',
+    Item: {
+      "user_key": postbody["user_key"],
+      "lecture_code": postbody["code"]
+    }
+  };
+
+  var text = "";
+  var status = 200;
+
+  dynamo.put(params, (err, data) => {
+    if (err) {
+      text = JSON.stringify({
+        "message": "강의 코드 삽입 에러 - " + err
+      });
+      status = 500;
+    } else text = JSON.stringify({
+      "user_key": postbody["user_key"],
+      "code": postbody["code"],
+      "message": "강의 코드 삽입 성공 !"
+    });
+
+    callback(null, {
+      'statusCode': status,
+      'headers': {},
+      'body': text
+    });
+  });
+}
+
+// 강의 코드 중복 검사
+function searchOverlapLecture(dynamo, postbody, callback) {
+
+  var params = {
+    TableName: 'programmers_timetable',
+    KeyConditionExpression: "user_key = :key and lecture_code = :code",
+    ExpressionAttributeValues: {
+      ":key": postbody["user_key"],
+      ":code": postbody["code"]
+    }
+  };
+
+  dynamo.query(params, (err, data) => {
+    var insertState = true
+    if (data["Count"] !== 0) insertState = false;
+
+    if (insertState) {
+      //강의 코드 추가 작업
+      insertLecture(dynamo, postbody, callback);
+
+    } else callback(null, {
+      'statusCode': 422,
+      'body': errorMessage("/programmers/timetable", "POST", "중복되는 데이터가 존재합니다.")
+    });
+  });
 }
