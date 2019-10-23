@@ -2,7 +2,7 @@ const AWS = require("aws-sdk");
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
 //강좌 controller
-const lecture = require("./lectureController");
+const lecture = require("./lecturesController");
 //시간표 controller
 const timetable = require("./timetableController");
 
