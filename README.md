@@ -190,7 +190,7 @@ windows의 콘솔창은 기본 cp949 형식이며, utf-8 인코딩의 한글은 
 3. 커맨드라인에 아래와 같이 입력합니다. ( utf-8(65001)로 변경 )
     > chcp 65001
 4. 한글 결과가 나오는 rest url을 호출하면 정상적으로 호출되는 것을 확인하실 수 있습니다.
-5. Lecture API cURL요청시 https://www.url-encode-decode.com/ 에서 한글만 인코딩 후 요청해야 잘 출력됩니다.
+5. Lectures API cURL요청시 https://www.url-encode-decode.com/ 에서 한글만 인코딩 후 요청해야 잘 출력됩니다.
 
 ## 개발 배경
 - 개발은 AWS DynamoDB, AWS Lambda, AWS API Gateway, AWS S3를 사용하여 개발
