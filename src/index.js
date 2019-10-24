@@ -7,6 +7,8 @@ const errorMessage = require("./errorMessage");
 const lecture = require("./lecturesController");
 //시간표 controller
 const timetable = require("./timetableController");
+//상세 일정 controller
+const calendar = require("./calendarController");
 
 module.exports.handler = (event, context, callback) => {
   // HTTP method
@@ -34,6 +36,14 @@ module.exports.handler = (event, context, callback) => {
     }
     else if(operation === "DELETE"){
       timetable.DELETE(dynamo, queryparam, body, callback);
+    }
+  }
+  else if (resource === "/programmers/calendar"){
+    if(operation === "GET"){
+      calendar.GET(dynamo, queryparam, body, callback);
+    }
+    else if(operation === "POST"){
+      calendar.POST(dynamo, queryparam, body, callback);
     }
   }
 };
