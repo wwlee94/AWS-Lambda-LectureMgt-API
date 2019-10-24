@@ -8,7 +8,7 @@ def lambda_handler(event, context):
 
     s3 = boto3.client('s3')
     dyndb = boto3.client('dynamodb', region_name= region)
-    confile = s3.get_object(Bucket='aws-lecture-bucket', Key='programmers_lecture.csv')
+    confile = s3.get_object(Bucket='aws-lecture-bucket', Key='programmers_lecture_v2.csv')
     recList = confile['Body'].read().decode("utf-8-sig").split('\n')
     firstrecord = True
     csv_reader = csv.reader(recList, delimiter=',', quotechar='"')
@@ -23,6 +23,7 @@ def lambda_handler(event, context):
             starttime = row[3]
             endtime = row[4]
             dayofweek = row[5]
+            day_list = list(dayofweek) # str -> list 씌우면 하나하나 나뉘어짐
             response = dyndb.put_item(
                 TableName='programmers_lecture',
                 Item={
@@ -31,7 +32,9 @@ def lambda_handler(event, context):
                     'professor':{'S':professor},
                     'starttime':{'S':starttime},
                     'endtime':{'S':endtime},
-                    'dayofweek':{'S':dayofweek}
+                    'dayofweek':{
+                        'SS': day_list
+                    }
                 }
             )
             print("put success")

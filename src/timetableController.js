@@ -137,35 +137,49 @@ module.exports.DELETE = function(dynamo, queryparam, postbody, callback) {
 
 //강의 코드 추가
 function insertLecture(dynamo, postbody, callback) {
-  var params = {
-    TableName: 'programmers_timetable',
-    Item: {
-      "user_key": postbody["user_key"],
-      "lecture_code": postbody["code"]
-    }
-  };
+  // 강의코드 validation
+  var re = new RegExp("PG1807-[0-9]{2}$");
+  var result = re.test(postbody["code"]);
 
-  var text = "";
-  var status = 200;
-
-  dynamo.put(params, (err, data) => {
-    if (err) {
-      text = JSON.stringify({
-        "message": "강의 코드 삽입 에러 - " + err
-      });
-      status = 422;
-    } else text = JSON.stringify({
-      "user_key": postbody["user_key"],
-      "code": postbody["code"],
-      "message": "강의 코드 삽입 성공 !"
-    });
-
+  // 강의코드가 틀리면
+  if (!result) {
     callback(null, {
-      'statusCode': status,
-      'headers': {},
-      'body': text
+      'statusCode': 400,
+      'body': errorMessage("/programmers/timetable", "POST", "code는 'PG1807-??' 형태이어야 합니다.")
     });
-  });
+    return;
+  } else {
+
+    var params = {
+      TableName: 'programmers_timetable',
+      Item: {
+        "user_key": postbody["user_key"],
+        "lecture_code": postbody["code"]
+      }
+    };
+
+    var text = "";
+    var status = 200;
+
+    dynamo.put(params, (err, data) => {
+      if (err) {
+        text = JSON.stringify({
+          "message": "강의 코드 삽입 에러 - " + err
+        });
+        status = 422;
+      } else text = JSON.stringify({
+        "user_key": postbody["user_key"],
+        "code": postbody["code"],
+        "message": "강의 코드 삽입 성공 !"
+      });
+
+      callback(null, {
+        'statusCode': status,
+        'headers': {},
+        'body': text
+      });
+    });
+  }
 }
 
 // 강의 코드 중복 검사
