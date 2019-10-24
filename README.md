@@ -1,13 +1,34 @@
 # 프로그래머스 윈터 코딩 앱 개발 과제 - 강의 관리 API
 강의 목록을 조회할 수 있고 각 사용자별로 추가한 강의를 조회, 저장, 삭제 해주는 API
 
+## 윈터코딩 앱 개발 과제 설명
+1. 응시자는 강의 관리 API가 제공하는 기능을 사용하여 앱을 구현해야합니다.
+
+2. Lectures API로 강의 목록을 조회 할 수 있습니다.
+  - 모든 강의 목록을 가져올 수 있습니다.
+  - 강의 코드만으로 원하는 강의 정보를 조회할 수 있습니다.
+  - 특정 이름으로 시작하는 모든 강의를 검색할 수 있습니다.
+  > (강의 목록은 이미 만들어져 있습니다.)
+
+3. Timetable API로 강의를 추가하거나 삭제하거나 조회 할 수 있습니다.
+  - 원하는 강의를 추가해서 저장할 수 있습니다.
+  - 추가한 강의를 삭제할 수 있습니다.
+  - 추가한 강의를 모두 조회할 수 있습니다.
+  > 조회하면 저장된 모든 강의코드를 반환합니다.
+
 # API REFERENCE
 
 ### BASE URL
 - https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programmers
 
+  > BASE URL 뒤에 원하는 리소스를 붙혀 사용합니다.
+  ex) {BASE URL}/lectures?code=PG1807-01
+
 ### API 접근 키 (x-api-key)
 - QJuHAX8evMY24jvpHfHQ4pHGetlk5vn8FJbk70O6
+
+  > Request Header에 추가해서 요청해야 API 사용이 가능합니다.
+
 
 ## Lectures API (강의 정보 API)
 강의 목록을 조회 할 수 있는 API
@@ -20,7 +41,7 @@ GET /lectures?lecture={강의이름} -> lecture로 시작하는 과목명을 모
 ```
 
 ### Lectures 구조
-| code      | lecture              | professor   | starttime | endtime | dayofweek |
+| code      | lecture              | professor   | start_time | end_time | dayofweek |
 |-----------|----------------------|-------------|-----------|---------|-----------|
 | GE1807-01 | World Wide English 1 | Caitlyn Lee | 10:30     | 12:30   | 월금      |
 | ..        | ..                   | ..          | ..        | ..      | ..        |
@@ -32,8 +53,8 @@ GET /lectures?lecture={강의이름} -> lecture로 시작하는 과목명을 모
 - code -> 강의 코드
 - lecture -> 강의 이름
 - professor -> 교수 이름
-- starttime -> 강의 시작 시간
-- endtime -> 강의 종료 시간
+- start_time -> 강의 시작 시간
+- end_time -> 강의 종료 시간
 - dayofweek -> 강의 요일
 
 ### Lectures API 요청 - GET 메소드
