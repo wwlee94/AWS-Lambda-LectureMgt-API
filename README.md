@@ -178,12 +178,12 @@ curl -X DELETE -d "{\"user_key\":\"token_key_grepp\",\"code\":\"GE1807-12\"}" ht
 | Status Code               | Description                                       |
 |---------------------------|---------------------------------------------------|
 | 200 OK                    | 성공                                              |
-| 400 Bad Request           | 클라이언트 요청 오류 - user_key, code 가 없거나 빈값일때|
-| 409 Conflict              | 데이터 추가시 이미 있는 데이터가 존재할 때          |
-| 409 Conflict              | 데이터 삭제시 권한이 없거나 없는 데이터를 삭제할 때   |
-| 422 Unprocessable Entity  | 데이터 추가시 유효하지 않은 사용자 ID 토큰일 떄      |
+| 400 Bad Request           | 클라이언트 요청 오류 - user_key, code가 없거나 빈값일때|
 | 403 Forbidden             | x-api-key 인증 에러                               |
 | 403 Forbidden             | URL 경로, HTTP method 오류                        |
+| 403 Forbidden             | 데이터 추가시 유효하지 않은 사용자 ID 토큰일 떄      |
+| 409 Conflict              | 데이터 추가시 이미 있는 데이터가 존재할 때(중복)     |
+| 422 Unprocessable Entity  | 데이터 삭제시 없는 데이터를 삭제하려 할 때          |
 | 500 Internal Server Error | 서버에 문제가 있을 경우                           |
 
 ## 주의 사항

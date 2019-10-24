@@ -59,7 +59,7 @@ module.exports.POST = function(dynamo, queryparam, postbody, callback) {
           // token이 유효하지 않을 때
           else {
             callback(null, {
-              'statusCode': 422,
+              'statusCode': 403,
               'body': errorMessage("/programmers/timetable", "POST", "유효한 사용자 ID 토큰이 아닙니다. 정확한 프로그래머스 사용자 ID 토큰을 요청해주세요.")
             });
           }
@@ -153,7 +153,7 @@ function insertLecture(dynamo, postbody, callback) {
       text = JSON.stringify({
         "message": "강의 코드 삽입 에러 - " + err
       });
-      status = 500;
+      status = 422;
     } else text = JSON.stringify({
       "user_key": postbody["user_key"],
       "code": postbody["code"],
@@ -189,7 +189,7 @@ function searchOverlapLecture(dynamo, postbody, callback) {
       insertLecture(dynamo, postbody, callback);
 
     } else callback(null, {
-      'statusCode': 422,
+      'statusCode': 409,
       'body': errorMessage("/programmers/timetable", "POST", "중복되는 데이터가 존재합니다.")
     });
   });
