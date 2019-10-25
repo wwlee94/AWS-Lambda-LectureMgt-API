@@ -39,23 +39,6 @@ GET /lectures?code={강의코드} -> code 값과 동일한 강의 정보가 반�
 GET /lectures?lecture={강의이름} -> lecture로 시작하는 과목명을 모두 반환합니다. (대소문자 구분)
 ```
 
-### Lectures 구조
-| code      | lecture              | professor   | location | start_time | end_time | dayofweek |
-|-----------|----------------------|-------------|----------|-----------|---------|-----------|
-| PG1807-01 | World Wide English 1 | Caitlyn Lee | 혜인관403 | 10:30     | 12:30   | 월금      |
-| ..        | ..                   | ..          |..        | ..        | ..      | ..        |
-
-#### Lectures 컬럼 설명
-| Column     | Type      | Description   |
-|------------|-----------|---------------|
-| code       | String    | 강의 코드      |
-| lecture    | String    | 강의 이름      |
-| professor  | String    | 교수 이름      |
-| location   | String    | 강의실        |
-| start_time | String    | 강의 시작시간 |
-| end_time   | String    | 강의 종료시간 |
-| dayofweek  | StringSet | 강의 요일      |
-
 ### Lectures API 요청 - GET 메소드
 강의 목록을 조회 할 수 있는 메소드
 
@@ -85,22 +68,33 @@ curl -G https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programme
 {
     "Items": [
         {
+            "code": "PG1807-01",
+            "lecture": "World Wide English 1",
+            "professor": "Caitlyn Lee",
+            "location": "혜인관403",                        
+            "start_time": "10:45",
+            "end_time": "12:30",
             "dayofweek": [
                 "금",
                 "월"
-            ],
-            "code": "PG1807-01",
-            "location": "혜인관403",
-            "lecture": "World Wide English 1",
-            "professor": "Caitlyn Lee",
-            "start_time": "10:45",
-            "end_time": "12:30"
+            ]                        
         }
     ],
     "Count": 1,
     "ScannedCount": 1
 }
 ```
+
+#### Response Body 설명
+| Column     | Type      | Description   |
+|------------|-----------|---------------|
+| code       | String    | 강의 코드      |
+| lecture    | String    | 강의 이름      |
+| professor  | String    | 교수 이름      |
+| location   | String    | 강의실        |
+| start_time | String    | 강의 시작시간 |
+| end_time   | String    | 강의 종료시간 |
+| dayofweek  | StringSet | 강의 요일      |
 
 #### Response Status Code
 | Status Code               | Description                                       |
@@ -121,19 +115,6 @@ POST /timetable -> 사용자가 새로운 강의 코드를 추가합니다.
 
 DELETE /timetable -> 사용자의 추가된 강의 코드를 삭제합니다.
 ```
-
-### Timetable 구조
-| user_key    | lecture_code |
-|-------------|--------------|
-| {user_id_token} | PG1807-01    |
-| {user_id_token} | PG1807-15    |
-| ..          | ..           |
-
-#### Timetable 컬럼 설명
-| Column       | Type   | Description                                      |
-|--------------|--------|--------------------------------------------------|
-| user_key     | String | 사용자 ID 토큰 (프로그래머스에서 지급 받은 토큰) |
-| lecture_code | String | 강의 코드                                        |
 
 ### Timetable API 요청 - GET 메소드
 사용자별로 추가한 강의 코드를 모두 조회할 수 있는 메소드
@@ -172,6 +153,11 @@ curl -G https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programme
     "ScannedCount": 2
 }
 ```
+
+#### Response Body 설명
+| Item       | Type   | Description                                      |
+|--------------|--------|--------------------------------------------------|
+| lecture_code | String | 강의 코드                                        |
 
 #### Response Status Code
 | Status Code               | Description                                       |

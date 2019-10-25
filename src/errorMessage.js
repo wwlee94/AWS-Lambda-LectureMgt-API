@@ -1,4 +1,4 @@
-module.exports = function(resource, httpMethod, message){
+module.exports = function(resource, httpMethod, message) {
   const msg = {};
   msg["resource"] = resource;
   msg["httpMethod"] = httpMethod;

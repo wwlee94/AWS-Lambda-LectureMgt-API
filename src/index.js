@@ -22,28 +22,24 @@ module.exports.handler = (event, context, callback) => {
 
   // 강좌 테이블
   if (resource === "/programmers/lectures") {
-    if(operation === "GET"){
+    if (operation === "GET") {
       lecture.GET(dynamo, queryparam, callback);
     }
   }
   //시간표 테이블
   else if (resource === "/programmers/timetable") {
-    if(operation === "GET"){
-      timetable.GET(dynamo, queryparam, body, callback);
+    if (operation === "GET") {
+      timetable.GET(dynamo, queryparam, callback);
+    } else if (operation === "POST") {
+      timetable.POST(dynamo, body, callback);
+    } else if (operation === "DELETE") {
+      timetable.DELETE(dynamo, body, callback);
     }
-    else if(operation === "POST"){
-      timetable.POST(dynamo, queryparam, body, callback);
-    }
-    else if(operation === "DELETE"){
-      timetable.DELETE(dynamo, queryparam, body, callback);
-    }
-  }
-  else if (resource === "/programmers/calendar"){
-    if(operation === "GET"){
-      calendar.GET(dynamo, queryparam, body, callback);
-    }
-    else if(operation === "POST"){
-      calendar.POST(dynamo, queryparam, body, callback);
+  } else if (resource === "/programmers/calendar") {
+    if (operation === "GET") {
+      calendar.GET(dynamo, queryparam, callback);
+    } else if (operation === "POST") {
+      calendar.POST(dynamo, body, callback);
     }
   }
 };
