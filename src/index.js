@@ -8,7 +8,7 @@ const lecture = require("./lecturesController");
 //시간표 controller
 const timetable = require("./timetableController");
 //상세 일정 controller
-const calendar = require("./calendarController");
+const calendar = require("./memoController");
 
 module.exports.handler = (event, context, callback) => {
   // HTTP method
@@ -35,11 +35,13 @@ module.exports.handler = (event, context, callback) => {
     } else if (operation === "DELETE") {
       timetable.DELETE(dynamo, body, callback);
     }
-  } else if (resource === "/programmers/calendar") {
+  } else if (resource === "/programmers/memo") {
     if (operation === "GET") {
       calendar.GET(dynamo, queryparam, callback);
     } else if (operation === "POST") {
       calendar.POST(dynamo, body, callback);
+    } else if (operation === "DELETE") {
+      calendar.DELETE(dynamo, body, callback);
     }
   }
 };

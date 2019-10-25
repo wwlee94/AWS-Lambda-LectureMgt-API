@@ -13,8 +13,7 @@ module.exports.GET = function(dynamo, queryparam, callback) {
         'statusCode': 400,
         'body': errorMessage("/programmers/timetable", "GET", "user_key 요청 변수가 비어 있어 시간표를 조회 할 수 없습니다.")
       });
-    }
-    else callback(null, {
+    } else callback(null, {
       'statusCode': 400,
       'body': errorMessage("/programmers/timetable", "GET", "user_key 외에 다른 변수를 요청했습니다.")
     });
@@ -24,6 +23,7 @@ module.exports.GET = function(dynamo, queryparam, callback) {
   });
 };
 // timetable POST 요청
+// 함수로 다 뺄것
 module.exports.POST = function(dynamo, postbody, callback) {
   var token_validation = false;
   //validation
@@ -80,7 +80,6 @@ module.exports.DELETE = function(dynamo, postbody, callback) {
   //validation
   if (postbody !== null) {
     if ("user_key" in postbody && "code" in postbody) {
-      //데이터 추가 작업
       var params = {
         TableName: 'programmers_timetable',
         Key: {
@@ -98,13 +97,11 @@ module.exports.DELETE = function(dynamo, postbody, callback) {
       dynamo.delete(params, (err, data) => {
         if (err) {
           text = JSON.stringify({
-            "message": "강의 코드 삭제 에러 - " + err
+            "message": "강의 코드 삭제 에러 : " + err
           });
           status = 422;
         } else text = JSON.stringify({
-          "user_key": postbody["user_key"],
-          "code": postbody["code"],
-          "message": "강의 코드 삭제 성공 !"
+          "message": postbody["code"] + " 강의 코드 삭제 성공 !"
         });
         callback(null, {
           'statusCode': status,
@@ -147,18 +144,6 @@ function getLectureCode(dynamo, queryparam, callback) {
 
 //강의 코드 추가
 function insertLecture(dynamo, postbody, callback) {
-  // 강의코드 validation
-  var re = new RegExp("PG1807-[0-9]{2}$");
-  var result = re.test(postbody["code"]);
-
-  // 강의코드가 틀리면
-  if (!result) {
-    callback(null, {
-      'statusCode': 400,
-      'body': errorMessage("/programmers/timetable", "POST", "code는 'PG1807-??' 형태이어야 합니다.")
-    });
-    return;
-  } else {
 
     var params = {
       TableName: 'programmers_timetable',
@@ -174,13 +159,11 @@ function insertLecture(dynamo, postbody, callback) {
     dynamo.put(params, (err, data) => {
       if (err) {
         text = JSON.stringify({
-          "message": "강의 코드 삽입 에러 - " + err
+          "message": "강의 코드 추가 에러 : " + err
         });
         status = 422;
       } else text = JSON.stringify({
-        "user_key": postbody["user_key"],
-        "code": postbody["code"],
-        "message": "강의 코드 삽입 성공 !"
+        "message": postbody["code"] + " 강의 코드 추가 성공 !"
       });
 
       callback(null, {
@@ -189,11 +172,11 @@ function insertLecture(dynamo, postbody, callback) {
         'body': text
       });
     });
-  }
+
 }
 
-// 강의 코드 중복 검사
-function validateOverlap(dynamo, postbody, callback) {
+// 파라미터 중복 검사
+function validateAllParameter(dynamo, postbody, callback) {
 
   var params = {
     TableName: 'programmers_timetable',
@@ -207,14 +190,34 @@ function validateOverlap(dynamo, postbody, callback) {
   dynamo.query(params, (err, data) => {
     var insertState = true
     if (data["Count"] !== 0) insertState = false;
-
+    // 중복 검사
     if (insertState) {
-      //강의 코드 추가 작업
-      insertLecture(dynamo, postbody, callback);
-
+      // 강의 코드 validation
+      if (validateLectureCode(postbody["code"], "POST", callback)) {
+        //강의 코드 추가 작업
+        insertLecture(dynamo, postbody, callback);
+      }
     } else callback(null, {
       'statusCode': 409,
-      'body': errorMessage("/programmers/timetable", "POST", "중복되는 데이터가 존재합니다.")
+      'body': errorMessage("/programmers/timetable", "POST", "이미 등록한 강의입니다.")
     });
   });
+}
+
+// lecture_code 파라미터 검증 - GET, POST
+function validateLectureCode(lecture_code, method, callback) {
+  // 강의코드 validation
+  var re = new RegExp("PG1807-[0-9]{2}$");
+  var result = re.test(lecture_code);
+  if (!result) {
+    //lecture_code 검증 실패
+    callback(null, {
+      'statusCode': 400,
+      'body': errorMessage("/programmers/timetable", method, "code는 'PG1807-??' 형태이어야 합니다.")
+    });
+    return false;
+  } else {
+    //code 검증 완료
+    return true;
+  }
 }

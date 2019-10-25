@@ -10,10 +10,18 @@
   - 특정 이름으로 시작하는 모든 강의를 검색할 수 있습니다.
 
 3. Timetable API로 강의를 추가하거나 삭제하거나 추가한 강의를 조회 할 수 있습니다.
-  - 원하는 강의를 추가해서 저장할 수 있습니다.
+  - 원하는 강의를 저장할 수 있습니다.
   - 추가한 강의를 삭제할 수 있습니다.
   - 추가한 강의를 모두 조회할 수 있습니다.
   > 조회하면 저장된 모든 강의코드를 반환합니다.
+
+4. Memo API로 추가한 강의에 메모를 쓰거나 삭제하거나 작성한 메모를 조회할 수 있습니다.
+  - 작성한 모든 메모를 조회할 수 있습니다.
+  - 특정 강의의 메모만 조회할 수 있습니다.
+  - 강의에 메모를 추가 할 수 있습니다.
+    > 메모 종류는 시험, 과제, 스터디 3가지 종류만 있습니다.
+  - 추가한 메모를 삭제 할 수 있습니다.
+    > 기본 요구 사항에 포함 X
 
 # API REFERENCE
 
@@ -27,7 +35,6 @@
 - QJuHAX8evMY24jvpHfHQ4pHGetlk5vn8FJbk70O6
 
   > Request Header에 추가해서 요청해야 API 사용이 가능합니다.
-
 
 ## Lectures API
 강의 목록을 조회 할 수 있는 API
@@ -56,7 +63,7 @@ Content-Type: application/json
 
 | Parameter | Type   | Description |
 |----------------|--------|-------------|
-| code           | String | 강의 코드   |
+| code           | String | 강의 코드 ('PG1807-??' 형식)   |
 | lecture        | String | 강의 이름   |
 
 #### 요청 예시 - cURL
@@ -155,7 +162,7 @@ curl -G https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programme
 ```
 
 #### Response Body 설명
-| Item       | Type   | Description                                      |
+| Column       | Type   | Description                                      |
 |--------------|--------|--------------------------------------------------|
 | lecture_code | String | 강의 코드                                        |
 
@@ -202,7 +209,7 @@ Content-Type: application/json
 | Parameter | Type   | Description |
 |----------------|--------|-------------|
 | user_key    | String | 사용자 ID 토큰 (프로그래머스에서 지급 받은 토큰)   |
-| code       | String | 강의 코드   |
+| code       | String | 강의 코드 ('PG1807-??' 형식)  |
 
 #### 요청 예시 - cURL
 ##### POST 추가 예시
