@@ -21,7 +21,7 @@
   - 강의에 메모를 추가 할 수 있습니다.
     > 메모 종류는 시험, 과제, 스터디 3가지 종류만 있습니다.
   - 추가한 메모를 삭제 할 수 있습니다.
-    > 기본 요구 사항에 포함 X
+    > 기본 요구 사항에 포함 안되는 기능입니다.
 
 # API REFERENCE
 
@@ -156,8 +156,8 @@ curl -G https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programme
             "lecture_code": "PG1807-10"
         }
     ],
-    "Count": 2,
-    "ScannedCount": 2
+    "Count": 1,
+    "ScannedCount": 1
 }
 ```
 
