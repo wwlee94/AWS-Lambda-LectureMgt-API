@@ -21,7 +21,7 @@
   - 강의에 메모를 추가 할 수 있습니다.
     > 메모 종류는 시험, 과제, 스터디 3가지 종류만 있습니다.
   - 추가한 메모를 삭제 할 수 있습니다.
-    > 기본 요구 사항에 포함 안되는 기능입니다.
+    > 삭제 기능은 기본 요구 사항에 포함되지 않습니다.
 
 # API REFERENCE
 
@@ -198,10 +198,10 @@ Content-Type: application/json
 |-----------|----------------------------------|
 | x-api-key | 강의 관리 API를 이용하기 위한 key |
 
-#### RequestBody 요청 예시 (필수)
+#### Request Body 요청 예시 (필수)
 ```
 {
-  "user_key":"{user_id_token}",
+  "user_key":"{사용자 ID 토큰}",
   "code" : "PG1807-01"
 }
 ```
@@ -230,6 +230,155 @@ curl -X DELETE -d "{\"user_key\":\"token_key_grepp\",\"code\":\"PG1807-12\"}" ht
 | 403 Forbidden             | URL 경로, HTTP method 오류                        |
 | 403 Forbidden             | 데이터 추가시 유효하지 않은 사용자 ID 토큰일 떄      |
 | 409 Conflict              | 데이터 추가시 이미 있는 데이터가 존재할 때(중복)     |
+| 422 Unprocessable Entity  | 데이터 삭제시 없는 데이터를 삭제하려 할 때          |
+| 500 Internal Server Error | 서버에 문제가 있을 경우                           |
+
+## Memo API
+추가한 강의에 메모를 쓰거나 메모를 삭제하거나 작성한 메모를 조회할 수 있는 API
+```
+GET /memo?user_key={사용자 ID 토큰} -> 작성한 모든 메모를 조회할 수 있습니다.
+
+GET /memo?user_key={사용자 ID 토큰}&code={강의 코드} -> code 이름의 특정 강의 메모만 조회할 수 있습니다.
+
+POST /memo -> 특정 강의에 메모를 추가 할 수 있습니다.
+
+DELETE /memo -> 특정 강의의 메모를 삭제 할 수 있습니다.
+```
+
+### Memo API 요청 - GET 메소드
+강의에 추가된 메모를 조회 할 수 있는 메소드
+
+#### Request Header 구조
+```
+GET /memo
+x-api-key: {x-api-key}
+Content-Type: application/json
+```
+| Header      | Description                      |
+|-----------|----------------------------------|
+| x-api-key | 강의 관리 API를 이용하기 위한 key |
+
+#### QueryParameter (선택)
+
+| Parameter | Type   | Description |
+|----------------|--------|-------------|
+| user_key       | String | 사용자 ID 토큰 (프로그래머스에서 지급 받은 토큰)   |
+| code           | String | 강의 코드 ('PG1807-??' 형식)   |
+
+#### 요청 예시 - cURL
+```
+curl -G https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programmers/memo?user_key=token_key_grepp -H "x-api-key : QJuHAX8evMY24jvpHfHQ4pHGetlk5vn8FJbk70O6" -H "Content-Type: application/json"
+```
+#### Response Body 예시
+```
+{
+    "Items": [
+        {
+            "user_key": "token_key_grepp",
+            "lecture_code": "PG1807-01",
+            "type": "EXAM",
+            "title": "일정 추가하기",
+            "description": "중간 고사",            
+            "date": "2019-10-28",            
+        }
+    ],
+    "Count": 1,
+    "ScannedCount": 1
+}
+```
+#### Response Body 설명
+| Column     | Type      | Description   |
+|------------|-----------|---------------|
+| user_key   | String    | 요청 했던 사용자 ID 토큰      |
+| lecture_code | String    | 강의 코드      |
+| type        | String    | 강의 타입      |
+| title       | String    | 메모 제목      |
+| description | String    | 메모 설명      |
+| date        | String    | 메모 작성일 |
+
+#### Response Status Code
+| Status Code               | Description                                       |
+|---------------------------|---------------------------------------------------|
+| 200 OK                    | 성공                                              |
+| 400 Bad Request           | 클라이언트 요청 오류 - user_key, code가 빈값일 때  |
+| 403 Forbidden             | x-api-key 인증 에러                               |
+| 403 Forbidden             | URL 경로, HTTP method 오류                        |
+| 500 Internal Server Error | 서버에 문제가 있을 경우                           |
+
+### Memo API 요청 - POST 메소드
+원하는 강의에 메모를 추가할 수 있는 API
+
+#### Request Header 구조
+```
+POST /memo
+x-api-key: {x-api-key}
+Content-Type: application/json
+```
+| Header      | Description                      |
+|-----------|----------------------------------|
+| x-api-key | 강의 관리 API를 이용하기 위한 key |
+
+#### Request Body 요청 예시 (필수)
+```
+  {
+    "user_key": "{사용자 ID 토큰}",
+    "code": "PG1807-50",
+    "type": "STUDY",
+    "title": "스터디",
+    "description": "스터디 시작",
+    "date": "2019-10-28"
+  }
+```
+
+##### POST 추가 예시
+```
+curl -X POST -d "{\"user_key\":\"{사용자 ID 토큰}\",\"code\":\"PG1807-50\",\"type\":\"STUDY\",\"title\":\"study\", \"description\" : \"study start\", \"date\" : \"2019-10-28\"}" https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programmers/memo -H "x-api-key : QJuHAX8evMY24jvpHfHQ4pHGetlk5vn8FJbk70O6" -H "Content-Type: application/json"
+```
+#### Response Status Code
+| Status Code               | Description                                       |
+|---------------------------|---------------------------------------------------|
+| 200 OK                    | 성공                                              |
+| 400 Bad Request           | 클라이언트 요청 오류 - 요청 변수가 공백이거나 없을 때  |
+| 403 Forbidden             | x-api-key 인증 에러                               |
+| 403 Forbidden             | URL 경로, HTTP method 오류                        |
+| 403 Forbidden             | 데이터 추가시 유효하지 않은 사용자 ID 토큰일 때      |
+| 409 Conflict              | 이미 등록된 메모 타입이거나 시간표에 등록되지 않은 강의에 메모를 추가하려 할 때 |
+| 422 Unprocessable Entity  | 형식에 맞지 않는 강의 코드, 메모 타입, 메모 날짜를 요청 했을 때 |
+| 500 Internal Server Error | 서버에 문제가 있을 경우                           |
+
+### Memo API 요청 - DELETE 메소드 (기본 요구 사항 포함 안됨)
+원하는 강의의 메모를 삭제할 수 있는 API
+
+#### Request Header 구조
+```
+DELETE /memo
+x-api-key: {x-api-key}
+Content-Type: application/json
+```
+| Header      | Description                      |
+|-----------|----------------------------------|
+| x-api-key | 강의 관리 API를 이용하기 위한 key |
+
+#### Request Body 요청 예시 (필수)
+```
+  {
+    "code": "PG1807-50",
+    "user_key": "{사용자 ID 토큰}",
+    "type": "STUDY"
+  }
+```
+
+##### DELETE 추가 예시
+```
+curl -X DELETE -d "{\"user_key\":\"{사용자 ID 토큰}\",\"code\":\"PG1807-50\",\"type\":\"STUDY\"}" https://k03c8j1o5a.execute-api.ap-northeast-2.amazonaws.com/v1/programmers/memo -H "x-api-key : QJuHAX8evMY24jvpHfHQ4pHGetlk5vn8FJbk70O6" -H "Content-Type: application/json"
+```
+#### Response Status Code
+| Status Code               | Description                                       |
+|---------------------------|---------------------------------------------------|
+| 200 OK                    | 성공                                              |
+| 400 Bad Request           | 클라이언트 요청 오류 - user_key, code가 빈값일 때  |
+| 403 Forbidden             | x-api-key 인증 에러                               |
+| 403 Forbidden             | URL 경로, HTTP method 오류                        |
 | 422 Unprocessable Entity  | 데이터 삭제시 없는 데이터를 삭제하려 할 때          |
 | 500 Internal Server Error | 서버에 문제가 있을 경우                           |
 

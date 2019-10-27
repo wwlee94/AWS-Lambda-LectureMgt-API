@@ -161,7 +161,7 @@ function getDetailedMemo(dynamo, queryparam, callback) {
     });
   } else {
     callback(null, {
-      'statusCode': 400,
+      'statusCode': 422,
       'body': errorMessage("/programmers/memo", "GET", "code 요청 변수는 TEST, STUDY, HOMEWORK 중 하나입니다.")
     });
   }
@@ -304,7 +304,7 @@ function validateLectureCode(param, method, callback) {
   if (!result) {
     //lecture_code 검증 실패
     callback(null, {
-      'statusCode': 400,
+      'statusCode': 422,
       'body': errorMessage("/programmers/memo", method, "code는 'PG1807-??' 형태이어야 합니다.")
     });
     return false;
@@ -322,7 +322,7 @@ function validateType(param, method, callback) {
   else {
     //type 검증 실패
     callback(null, {
-      'statusCode': 400,
+      'statusCode': 422,
       'body': errorMessage("/programmers/memo", method, "type은 'EXAM','STUDY','HOMEWORK' 중 하나의 형태이어야 합니다.")
     });
     return false;
@@ -338,7 +338,7 @@ function validateDate(param, method, callback) {
   if (!result) {
     //lecture_code 검증 실패
     callback(null, {
-      'statusCode': 400,
+      'statusCode': 422,
       'body': errorMessage("/programmers/memo", method, "date는 'yyyy-MM-dd' 형태이어야 합니다.")
     });
     return false;
