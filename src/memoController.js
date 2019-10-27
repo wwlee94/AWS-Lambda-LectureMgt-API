@@ -87,40 +87,45 @@ module.exports.DELETE = function(dynamo, postbody, callback) {
 
       if(postbody["user_key"] !== "" && postbody["code"] !== "" && postbody["type"] !== ""){
 
-        var lecture_code_type = postbody["code"] + "," + postbody["type"];
-        var params = {
-          TableName: 'programmers_memo',
-          Key: {
-            "user_key": postbody["user_key"],
-            "lecture_code_type" : lecture_code_type
-          },
-          ConditionExpression: "user_key = :key and lecture_code_type = :code",
-          ExpressionAttributeValues: {
-            ":key": postbody["user_key"],
-            ":code": lecture_code_type
+        if(validateLectureCode(postbody, "DELETE", callback)){
+          if(validateType(postbody, "DELETE", callback)){
+              // 검증 완료후 작업
+              var lecture_code_type = postbody["code"] + "," + postbody["type"];
+              var params = {
+                TableName: 'programmers_memo',
+                Key: {
+                  "user_key": postbody["user_key"],
+                  "lecture_code_type" : lecture_code_type
+                },
+                ConditionExpression: "user_key = :key and lecture_code_type = :code",
+                ExpressionAttributeValues: {
+                  ":key": postbody["user_key"],
+                  ":code": lecture_code_type
+                }
+              }
+              var text = "";
+              var status = 200;
+              dynamo.delete(params, (err, data) => {
+                if (err) {
+                  text = JSON.stringify({
+                    "type": postbody["type"],
+                    "lecture_code": postbody["code"],
+                    "message": "메모 삭제 에러 : " + err
+                  });
+                  status = 422;
+                } else text = JSON.stringify({
+                  "type": postbody["type"],
+                  "lecture_code": postbody["code"],
+                  "message": "메모 삭제 성공 !"
+                });
+                callback(null, {
+                  'statusCode': status,
+                  'headers': {},
+                  'body': text
+                });
+              });
           }
         }
-        var text = "";
-        var status = 200;
-        dynamo.delete(params, (err, data) => {
-          if (err) {
-            text = JSON.stringify({
-              "type": postbody["type"],
-              "lecture_code": postbody["code"],
-              "message": "메모 삭제 에러 : " + err
-            });
-            status = 422;
-          } else text = JSON.stringify({
-            "type": postbody["type"],
-            "lecture_code": postbody["code"],
-            "message": "메모 삭제 성공 !"
-          });
-          callback(null, {
-            'statusCode': status,
-            'headers': {},
-            'body': text
-          });
-        });
       } else callback(null, {
         'statusCode': 400,
         'body': errorMessage("/programmers/memo", "DELETE", "요청 변수는 공백일 수 없습니다.")

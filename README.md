@@ -228,7 +228,7 @@ curl -X DELETE -d "{\"user_key\":\"token_key_grepp\",\"code\":\"PG1807-12\"}" ht
 | 400 Bad Request           | 클라이언트 요청 오류 - user_key, code가 없거나 빈값일때|
 | 403 Forbidden             | x-api-key 인증 에러                               |
 | 403 Forbidden             | URL 경로, HTTP method 오류                        |
-| 403 Forbidden             | 데이터 추가시 유효하지 않은 사용자 ID 토큰일 떄      |
+| 403 Forbidden             | 유효하지 않은 사용자 ID 토큰일 떄      |
 | 409 Conflict              | 데이터 추가시 이미 있는 데이터가 존재할 때(중복)     |
 | 422 Unprocessable Entity  | 데이터 삭제시 없는 데이터를 삭제하려 할 때          |
 | 500 Internal Server Error | 서버에 문제가 있을 경우                           |
@@ -341,7 +341,7 @@ curl -X POST -d "{\"user_key\":\"{사용자 ID 토큰}\",\"code\":\"PG1807-50\",
 | 400 Bad Request           | 클라이언트 요청 오류 - 요청 변수가 공백이거나 없을 때  |
 | 403 Forbidden             | x-api-key 인증 에러                               |
 | 403 Forbidden             | URL 경로, HTTP method 오류                        |
-| 403 Forbidden             | 데이터 추가시 유효하지 않은 사용자 ID 토큰일 때      |
+| 403 Forbidden             | 유효하지 않은 사용자 ID 토큰일 때      |
 | 409 Conflict              | 이미 등록된 메모 타입이거나 시간표에 등록되지 않은 강의에 메모를 추가하려 할 때 |
 | 422 Unprocessable Entity  | 형식에 맞지 않는 강의 코드, 메모 타입, 메모 날짜를 요청 했을 때 |
 | 500 Internal Server Error | 서버에 문제가 있을 경우                           |
@@ -379,6 +379,7 @@ curl -X DELETE -d "{\"user_key\":\"{사용자 ID 토큰}\",\"code\":\"PG1807-50\
 | 400 Bad Request           | 클라이언트 요청 오류 - user_key, code가 빈값일 때  |
 | 403 Forbidden             | x-api-key 인증 에러                               |
 | 403 Forbidden             | URL 경로, HTTP method 오류                        |
+| 422 Unprocessable Entity  | 형식에 맞지 않는 강의 코드, 메모 타입, 메모 날짜를 요청 했을 때 |
 | 422 Unprocessable Entity  | 데이터 삭제시 없는 데이터를 삭제하려 할 때          |
 | 500 Internal Server Error | 서버에 문제가 있을 경우                           |
 
