@@ -45,7 +45,7 @@ module.exports.POST = function(dynamo, postbody, callback) {
           // 토큰이 검증 되었으면
           if (token_validation) {
             // 강의 중복검사 & 강의 코드 추가
-            validateOverlap(dynamo, postbody, callback);
+            validateAllParameter(dynamo, postbody, callback);
           }
           // token이 유효하지 않을 때
           else {
