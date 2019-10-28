@@ -1,6 +1,6 @@
 var errorMessage = require("./errorMessage");
 var request = require("request");
-var memo = require("./memoController");
+// var memo = require("./memoController");
 
 // timetable GET 요청
 module.exports.GET = function(dynamo, queryparam, callback) {

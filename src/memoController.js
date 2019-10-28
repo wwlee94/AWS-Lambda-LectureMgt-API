@@ -118,7 +118,7 @@ module.exports.DELETE = function(dynamo, postbody, callback) {
                 "lecture_code": postbody["code"],
                 "message": "메모 삭제 성공 !"
               });
-              //memoController에서 메모 지우는 경우 msg 추가해야하나?
+              //timetableController에서 강의 지우는 경우 고려?
               // if (controller === "memo") {
                 callback(null, {
                   'statusCode': status,
