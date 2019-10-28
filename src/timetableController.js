@@ -1,5 +1,6 @@
 var errorMessage = require("./errorMessage");
 var request = require("request");
+var memo = require("./memoController");
 
 // timetable GET 요청
 module.exports.GET = function(dynamo, queryparam, callback) {
@@ -80,35 +81,8 @@ module.exports.DELETE = function(dynamo, postbody, callback) {
   //validation
   if (postbody !== null) {
     if ("user_key" in postbody && "code" in postbody) {
-      var params = {
-        TableName: 'programmers_timetable',
-        Key: {
-          "user_key": postbody["user_key"],
-          "lecture_code": postbody["code"]
-        },
-        ConditionExpression: "user_key = :key and lecture_code = :code",
-        ExpressionAttributeValues: {
-          ":key": postbody["user_key"],
-          ":code": postbody["code"]
-        }
-      }
-      var text = "";
-      var status = 200;
-      dynamo.delete(params, (err, data) => {
-        if (err) {
-          text = JSON.stringify({
-            "message": "강의 코드 삭제 에러 : " + err
-          });
-          status = 422;
-        } else text = JSON.stringify({
-          "message": postbody["code"] + " 강의 코드 삭제 성공 !"
-        });
-        callback(null, {
-          'statusCode': status,
-          'headers': {},
-          'body': text
-        });
-      });
+      //삭제 작업
+      deleteTimetable(dynamo, postbody, callback);
     } else if ("user_key" in postbody && !("code" in postbody)) callback(null, {
       'statusCode': 400,
       'body': errorMessage("/programmers/timetable", "DELETE", "code 요청 변수가 없어 데이터를 삭제 할 수 없습니다.")
@@ -123,7 +97,7 @@ module.exports.DELETE = function(dynamo, postbody, callback) {
   });
 }
 
-//강의 코드 조회
+//강의 코드 조회 - GET
 function getLectureCode(dynamo, queryparam, callback) {
   var params = {
     TableName: 'programmers_timetable',
@@ -142,8 +116,8 @@ function getLectureCode(dynamo, queryparam, callback) {
   });
 }
 
-//강의 코드 추가
-function insertLecture(dynamo, postbody, callback) {
+//강의 코드 추가 - POST
+function insertTimetable(dynamo, postbody, callback) {
 
     var params = {
       TableName: 'programmers_timetable',
@@ -172,10 +146,9 @@ function insertLecture(dynamo, postbody, callback) {
         'body': text
       });
     });
-
 }
 
-// 파라미터 중복 검사
+// 파라미터 중복 검사 - POST
 function validateAllParameter(dynamo, postbody, callback) {
 
   var params = {
@@ -195,7 +168,7 @@ function validateAllParameter(dynamo, postbody, callback) {
       // 강의 코드 validation
       if (validateLectureCode(postbody["code"], "POST", callback)) {
         //강의 코드 추가 작업
-        insertLecture(dynamo, postbody, callback);
+        insertTimetable(dynamo, postbody, callback);
       }
     } else callback(null, {
       'statusCode': 409,
@@ -221,3 +194,83 @@ function validateLectureCode(lecture_code, method, callback) {
     return true;
   }
 }
+
+// 시간표 삭제 (강의 코드 삭제) - DELETE
+function deleteTimetable(dynamo, postbody, callback){
+  var params = {
+    TableName: 'programmers_timetable',
+    Key: {
+      "user_key": postbody["user_key"],
+      "lecture_code": postbody["code"]
+    },
+    ConditionExpression: "user_key = :key and lecture_code = :code",
+    ExpressionAttributeValues: {
+      ":key": postbody["user_key"],
+      ":code": postbody["code"]
+    }
+  }
+  var text = "";
+  var status = 200;
+  dynamo.delete(params, (err, data) => {
+    if (err) {
+      text = JSON.stringify({
+        "message": "강의 코드 삭제 에러 : " + err
+      });
+      status = 422;
+    } else text = JSON.stringify({
+      "message": postbody["code"] + " 강의 코드 삭제 성공 !"
+    });
+    callback(null, {
+      'statusCode': status,
+      'headers': {},
+      'body': text
+    });
+  });
+}
+
+// // 연쇄적으로 메모 삭제
+// function cascadeMemo(dynamo, postbody, callback){
+//     // parammeter 검증
+//     if (validateLectureCode(postbody["code"], "DELETE", callback)) {
+//       var params = {
+//         TableName: 'programmers_memo',
+//         KeyConditionExpression: "user_key = :key and (begins_with(lecture_code_type, :code))",
+//         ExpressionAttributeValues: {
+//           ":key": postbody["user_key"],
+//           ":code": postbody["code"]
+//         }
+//       }
+//       dynamo.query(params, (err, data) => {
+//         if (data !== "" && data !== null) {
+//           // code, type combine 형태 분리
+//           var splitData = splitCodeandType(data);
+//           var parsingData = splitData["Items"];
+//           // 개수 세고 연속적으로 다 지움
+//           for(var i=0;i<parsingData.length;i++){
+//             tempbody = {};
+//             tempbody["user_key"] = postbody["user_key"];
+//             tempbody["code"] = postbody["code"];
+//             tempbody["type"] = parsingData[i]["type"];
+//             memo.DELETE(dynamo, tempbody, callback, "timetable");
+//           }
+//           // deleteTimetable(dynamo, postbody, callback);
+//         }
+//       });
+//     }
+// }
+//
+// // code, type combine 형태 분리 -> PG1807-01,TEST -> [PG1807-01,TEST]
+// function splitCodeandType(data) {
+//   items = data["Items"]
+//   // 분리 작업
+//   for (var i = 0; i < items.length; i++) {
+//     lecture_code_type = items[i]["lecture_code_type"];
+//     //삭제
+//     delete items[i]["lecture_code_type"];
+//     // 분리 후 따로 저장
+//     temp = lecture_code_type.split(",");
+//     items[i]["lecture_code"] = temp[0];
+//     items[i]["type"] = temp[1];
+//   }
+//   return data;
+// }

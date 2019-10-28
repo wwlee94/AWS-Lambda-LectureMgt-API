@@ -85,45 +85,48 @@ module.exports.DELETE = function(dynamo, postbody, callback) {
   if (postbody !== null) {
     if ("user_key" in postbody && "code" in postbody && "type" in postbody) {
 
-      if(postbody["user_key"] !== "" && postbody["code"] !== "" && postbody["type"] !== ""){
+      if (postbody["user_key"] !== "" && postbody["code"] !== "" && postbody["type"] !== "") {
 
-        if(validateLectureCode(postbody, "DELETE", callback)){
-          if(validateType(postbody, "DELETE", callback)){
-              // 검증 완료후 작업
-              var lecture_code_type = postbody["code"] + "," + postbody["type"];
-              var params = {
-                TableName: 'programmers_memo',
-                Key: {
-                  "user_key": postbody["user_key"],
-                  "lecture_code_type" : lecture_code_type
-                },
-                ConditionExpression: "user_key = :key and lecture_code_type = :code",
-                ExpressionAttributeValues: {
-                  ":key": postbody["user_key"],
-                  ":code": lecture_code_type
-                }
+        if (validateLectureCode(postbody, "DELETE", callback)) {
+          if (validateType(postbody, "DELETE", callback)) {
+            // 검증 완료후 작업
+            var lecture_code_type = postbody["code"] + "," + postbody["type"];
+            var params = {
+              TableName: 'programmers_memo',
+              Key: {
+                "user_key": postbody["user_key"],
+                "lecture_code_type": lecture_code_type
+              },
+              ConditionExpression: "user_key = :key and lecture_code_type = :code",
+              ExpressionAttributeValues: {
+                ":key": postbody["user_key"],
+                ":code": lecture_code_type
               }
-              var text = "";
-              var status = 200;
-              dynamo.delete(params, (err, data) => {
-                if (err) {
-                  text = JSON.stringify({
-                    "type": postbody["type"],
-                    "lecture_code": postbody["code"],
-                    "message": "메모 삭제 에러 : " + err
-                  });
-                  status = 422;
-                } else text = JSON.stringify({
+            }
+            var text = "";
+            var status = 200;
+            dynamo.delete(params, (err, data) => {
+              if (err) {
+                text = JSON.stringify({
                   "type": postbody["type"],
                   "lecture_code": postbody["code"],
-                  "message": "메모 삭제 성공 !"
+                  "message": "메모 삭제 에러 : " + err
                 });
+                status = 422;
+              } else text = JSON.stringify({
+                "type": postbody["type"],
+                "lecture_code": postbody["code"],
+                "message": "메모 삭제 성공 !"
+              });
+              //memoController에서 메모 지우는 경우 msg 추가해야하나?
+              // if (controller === "memo") {
                 callback(null, {
                   'statusCode': status,
                   'headers': {},
                   'body': text
                 });
-              });
+              // }
+            });
           }
         }
       } else callback(null, {
@@ -163,11 +166,6 @@ function getDetailedMemo(dynamo, queryparam, callback) {
           'body': JSON.stringify(parsingData)
         });
       }
-    });
-  } else {
-    callback(null, {
-      'statusCode': 422,
-      'body': errorMessage("/programmers/memo", "GET", "code 요청 변수는 TEST, STUDY, HOMEWORK 중 하나입니다.")
     });
   }
 }
@@ -254,7 +252,7 @@ function validateUserKey(dynamo, postbody, callback) {
 }
 
 // 캘린더에 중복된 lecture_code와 type이 있는지 검사
-function validateMemo(dynamo, postbody, callback){
+function validateMemo(dynamo, postbody, callback) {
 
   var lecture_code_type = postbody["code"] + "," + postbody["type"];
 
@@ -270,10 +268,10 @@ function validateMemo(dynamo, postbody, callback){
   dynamo.query(params, (err, data) => {
     // 중복 검사 -> 추가 안되어있으면 다음 스텝!
     if (data["Count"] === 0) {
-        validateTimetable(dynamo, postbody, callback);
+      validateTimetable(dynamo, postbody, callback);
     } else callback(null, {
       'statusCode': 409,
-      'body': errorMessage("/programmers/memo", "POST", postbody["code"]+" 강의에서 이미 등록한 메모 타입입니다.")
+      'body': errorMessage("/programmers/memo", "POST", postbody["code"] + " 강의에서 이미 등록한 메모 타입입니다.")
     });
   });
 
