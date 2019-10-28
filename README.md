@@ -131,7 +131,7 @@ DELETE /timetable -> 사용자의 추가된 강의 코드를 삭제합니다.
 ```
 GET /timetable
 x-api-key: {x-api-key}
-Content-Type: application/json
+Content-Type: application/json  
 ```
 | Header      | Description                      |
 |-----------|----------------------------------|
